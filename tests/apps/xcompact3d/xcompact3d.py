@@ -18,7 +18,7 @@ class XCompact3DTest(rfm.RegressionTest):
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
 
-    tags = {"performance", "largescale", "applications"}
+    tags = {"performance", "applications"}
 
     num_nodes = 64
     num_tasks_per_node = 128
