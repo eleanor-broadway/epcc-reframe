@@ -12,7 +12,6 @@ class MLPerfEnvBuild(rfm.CompileOnlyRegressionTest):
     local = True
     build_locally = True
 
-
     @run_before('compile')
     def setup_build(self):
         self.build_system.commands = [
@@ -24,3 +23,5 @@ class MLPerfEnvBuild(rfm.CompileOnlyRegressionTest):
     def sanity_check_build(self):
         """Ensure build completed without errors"""
         return sn.assert_not_found("ERROR", self.stderr)
+
+# reframe -C configuration/archer2.py -c tests/pytorch/ -R -r
