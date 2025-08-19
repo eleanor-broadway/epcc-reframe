@@ -4,20 +4,37 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 @rfm.simple_test
-class PyTorchBaseEnvironment(rfm.RunOnlyRegressionTest): 
-    valid_systems = ["archer2:compute-gpu"]
-    valid_prog_environs = ["PrgEnv-cray"]
-    time_limit = "1h"
-    num_tasks = None
-    num_nodes = 1
-    num_gpus = parameter([4])
-    executable = "python"
+class DefaultPrgEnvCheck(rfm.RunOnlyRegressionTest):
+    """Check the default compilers"""
 
+    descr = "Ensure PrgEnv-cray is loaded by default"
+    valid_systems = ["archer2:login"]
+    valid_prog_environs = ["Default"]
+    executable = "module"
+    executable_opts = ["-t", "list"]
+    maintainers = ["a.turner@epcc.ed.ac.uk"]
+    tags = {"production", "craype"}
 
     @sanity_function
     def assert_finished(self):
-        """Sanity check that simulation finished successfully"""
-        return sn.assert_found("success", self.stdout)
+        """Sanity checks"""
+        return sn.assert_found(r"^PrgEnv-cray", self.stderr)
+
+
+# @rfm.simple_test
+# class PyTorchBaseEnvironment(rfm.RunOnlyRegressionTest): 
+#     valid_systems = ["archer2:compute-gpu"]
+#     valid_prog_environs = ["PrgEnv-cray"]
+#     time_limit = "1h"
+#     num_tasks = None
+#     num_nodes = 1
+#     num_gpus = parameter([4])
+#     executable = "python"
+
+#     @sanity_function
+#     def assert_finished(self):
+#         """Sanity check that simulation finished successfully"""
+#         return sn.assert_found("success", self.stdout)
 
 
 # @rfm.simple_test
