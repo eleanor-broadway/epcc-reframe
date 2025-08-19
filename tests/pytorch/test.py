@@ -1,7 +1,9 @@
 """ReFrame Tests for PyTorch"""
 
-import reframe as rfm 
+import reframe as rfm
 import reframe.utility.sanity as sn
+from reframe.core.decorators import sanity_function, run_after, run_before, simple_test
+from reframe.core.parameters import parameter
 
 class PyTorchBaseEnvironment(rfm.RunOnlyRegressionTest): 
     maintainers = ["e.broadway@epcc.ed.ac.uk"]
@@ -10,7 +12,7 @@ class PyTorchBaseEnvironment(rfm.RunOnlyRegressionTest):
     valid_systems = ["archer2:compute-gpu"]
     valid_prog_environs = ["PrgEnv-cray"]
 
-    @sanity_function
+    @rfm.sanity_function
     def assert_finished(self):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("success", self.stdout)
