@@ -3,25 +3,30 @@
 import reframe as rfm
 import reframe.utility.sanity as sn
 
+@rfm.simple_test
 class PyTorchBaseEnvironment(rfm.RunOnlyRegressionTest): 
-    maintainers = ["e.broadway@epcc.ed.ac.uk"]
-    strict_check = True
-    use_multithreading = False
     valid_systems = ["archer2:compute-gpu"]
     valid_prog_environs = ["PrgEnv-cray"]
+    time_limit = "1h"
+    num_tasks = None
+    num_nodes = 1
+    num_gpus = parameter([4])
+    executable = "python"
+
 
     @sanity_function
     def assert_finished(self):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("success", self.stdout)
 
-@rfm.simple_test
-class DeepCAMARCHER2GPUBase(PyTorchBaseEnvironment):
-    time_limit = "1h"
-    num_tasks = None
-    num_nodes = 1
-    num_gpus = parameter([4])
-    executable = "python"
+
+# @rfm.simple_test
+# class DeepCAMARCHER2GPUBase(PyTorchBaseEnvironment):
+#     time_limit = "1h"
+#     num_tasks = None
+#     num_nodes = 1
+#     num_gpus = parameter([4])
+#     executable = "python"
 
     # @run_after("init")
     # def setup_systems(self):
