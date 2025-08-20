@@ -12,7 +12,7 @@ class PyTorchBaseEnvironment(rfm.RunOnlyRegressionTest):
     @sanity_function
     def assert_finished(self):
         """Sanity checks"""
-        return sn.assert_found("success", self.stderr)
+        return sn.assert_found("success", self.stdout)
 
 
 @rfm.simple_test
@@ -25,18 +25,26 @@ class DeepCAMtest(PyTorchBaseEnvironment):
 
     # Currently set-up for ARCHER2 but should be easy to extend 
     # Very dependant on 
-    # (1) Source files being accessible 
+    # (1) Source files being accessible (need to edit utils/bnstats.py for CPU)
     # (2) Python environment already existing and being installed 
-    @run_after("init")
+    # @run_after("init")
+    # def setup_source(self): 
+    #     """Ideally this would be shared for all MLPerf tests"""
+        # get source code and put it somewhere discoverable? 
+        # https://reframe-hpc.readthedocs.io/en/stable/tutorial.html#multi-node-tests
+    # Also need to consider performance testing - can I include my edits? patch? 
+
+    @run_after("init", always_last=True)
     def setup_systems(self):
         self.executable = "python"
-        self.executable_opts = ["/work/z19/z19/eleanorb/reframe/hpc/deepcam/src/deepCam/train.py",
-            "--wireup_method", "nccl-slurm",
+        self.executable_opts = {"/work/z19/z19/eleanorb/reframe/hpc/deepcam/src/deepCam/train.py",
+            "--wireup_method nccl-slurm",
+            "--run_tag reframe",
+            "--output_dir $PWD",
             "--data_dir_prefix /work/z19/shared/mlperf-hpc/deepcam/mini",
             "--local_batch_size 8",
             "--max_epochs 5"
-        ]
-        self.prerun_cmds = ['source ${HOME/home/work}/pyenvs/mlperf-pt-gpu/bin/activate']
+        }
         self.extra_resources = {
             "qos": {"qos": "gpu-exc"},
             "gpu": {"num_gpus_per_node": str(self.num_gpus)},
@@ -44,6 +52,11 @@ class DeepCAMtest(PyTorchBaseEnvironment):
         self.env_vars = {
             "OMP_NUM_THREADS": "1",
             "HOME": "${HOME/home/work}",
+            "JOB_OUTPUT_PATH": "./results/${SLURM_JOB_ID}"
+        }
+        self.prerun_cmds = {
+            "source ${HOME/home/work}/pyenvs/mlperf-pt-gpu/bin/activate",
+            "mkdir -p ${JOB_OUTPUT_PATH}/logs" 
         }
 
     @run_before("run")
