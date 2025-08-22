@@ -14,9 +14,9 @@ import reframe.utility.udeps as udeps
 
 
 @rfm.simple_test
-class fetch_OpenFoam(rfm.RunOnlyRegressionTest):
+class FetchOpenFoam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
-    version = variable(str, value="v2212")
+    version = variable(str, value="v2412")
     executable = 'wget'
     executable_opts = [
         f"https://sourceforge.net/projects/openfoam/files/{version}/OpenFOAM-{version}.tgz",
