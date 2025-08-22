@@ -1,3 +1,4 @@
+import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 import reframe.utility.udeps as udeps
@@ -42,6 +43,7 @@ class BuildMLPerfPytorchEnv(rfm.CompileOnlyRegressionTest):
 
         # Commands executed during the build stage
         self.build_system.commands = [
+            "chmod u+x build_pytorch_env.sh",
             "./build_pytorch_env.sh"
         ]
 

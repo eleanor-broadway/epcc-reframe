@@ -4,9 +4,6 @@ import reframe.utility.sanity as sn
 import reframe.utility.udeps as udeps
 from mlperf_base import DeepCAMBase
 
-
-
-
 @rfm.simple_test
 class DeepCAMGPUtest(DeepCAMBase):
     """Running DeepCAM on GPU"""

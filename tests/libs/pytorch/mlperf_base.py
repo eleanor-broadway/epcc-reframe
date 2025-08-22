@@ -1,6 +1,10 @@
+import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 import reframe.utility.udeps as udeps
+
+from mlperf_build import fetch_mlperf_hpc_benchmarks
+from mlperf_build import BuildMLPerfPytorchEnv
 
 class MLPerfBase(rfm.RunOnlyRegressionTest):
     executable = "python"
