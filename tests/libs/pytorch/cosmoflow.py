@@ -2,16 +2,32 @@ import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 import reframe.utility.udeps as udeps
+
 from mlperf_base import MLPerfBase
 
 @rfm.simple_test
 class CosmoFlowCPUtest(MLPerfBase):
     """Running CosmoFlow on CPU"""
-    time_limit = "20m"
+    time_limit = "1h"
     valid_systems = ["archer2:compute", "cirrus:compute"]
     valid_prog_environs = ["PrgEnv-cray", "gcc"]
-    extra_resources = {"qos": {"qos": "short"}}
+    extra_resources = {"qos": {"qos": "standard"}}
     modules = ["tensorflow/2.13.0"]
+
+    @run_after("init")
+    def setup_environment(self):
+        """Setup environment"""
+        if self.current_system.name in ["archer2"]:
+            self.num_nodes = 1
+            self.num_tasks = 8
+            self.num_tasks_per_node = 8
+            self.num_cpus_per_task = 16
+
+        if self.current_system.name in ["cirrus"]:
+            self.num_nodes = 4
+            self.num_tasks = 8
+            self.num_tasks_per_node = 2
+            self.num_cpus_per_task = 18
 
     @performance_function("s", perf_key="total-epochs-time")
     def extract_time(self): 
@@ -21,8 +37,9 @@ class CosmoFlowCPUtest(MLPerfBase):
             conv=float,
         ) 
 
-    reference = {"archer2:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")}}
-    reference = {"cirrus:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")}}
+    reference = {
+        "archer2:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")}, 
+        "cirrus:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")}}
 
     @sanity_function
     def assert_finished(self):
@@ -35,26 +52,16 @@ class CosmoFlowCPUtest(MLPerfBase):
 
         if part == "archer2:compute":
             data_dir_prefix = "/work/z19/shared/mlperf-hpc/cosmoflow/mini/cosmoUniverse_2019_05_4parE_tf_v2_mini"
-            num_nodes = 1
-            num_tasks_per_node = 8
-            num_cpus_per_task = 16
-            num_tasks = 8
             self.env_vars = {
                 "UCX_MEMTYPE_CACHE": "n", 
-                "SRUN_CPUS_PER_TASK": "${SLURM_CPUS_PER_TASK}",
                 "MPICH_DPM_DIR": "${SLURM_SUBMIT_DIR}/dpmdir",
-                "OMP_NUM_THREADS": "${SLURM_CPUS_PER_TASK}",
+                f"OMP_NUM_THREADS": "{num_cpus_per_task}",
                 "TF_ENABLE_ONEDNN_OPTS": "1"
             }
 
         elif part == "cirrus:compute":
             data_dir_prefix = "/work/z04/shared/mlperf-hpc/cosmoflow/mini/cosmoUniverse_2019_05_4parE_tf_v2_mini"
-            num_nodes = 4
-            num_tasks_per_node = 2
-            num_cpus_per_task = 18
-            num_tasks = 8
             self.env_vars = {
-                "MPICH_DPM_DIR": "${SLURM_SUBMIT_DIR}/dpmdir",
                 f"OMP_NUM_THREADS": "{num_cpus_per_task}",
                 "TF_ENABLE_ONEDNN_OPTS": "1"
             }

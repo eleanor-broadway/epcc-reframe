@@ -13,9 +13,9 @@ class DeepCAMGPUtest(DeepCAMBase):
     num_gpus_per_node = 4
     time_limit = "1h"
     valid_systems = ["archer2:compute-gpu", "cirrus:compute-gpu"]
-    valid_prog_environs = ["rocm-PrgEnv-cray", "nvidia-mpi"]
+    valid_prog_environs = ["rocm-PrgEnv-cray", "Default"]
     reference = {
-        "archer2:compute-gpu": {"epoch-time": (40, -1.0, 1.0, "s")} 
+        "archer2:compute-gpu": {"epoch-time": (40, -1.0, 1.0, "s")}, 
         "cirrus:compute-gpu": {"epoch-time": (54, -1.0, 1.0, "s")} 
     }
 
@@ -28,22 +28,28 @@ class DeepCAMGPUtest(DeepCAMBase):
         part = self.current_partition.fullname
         if part == "archer2:compute-gpu":
             data_dir_prefix = "/work/z19/shared/mlperf-hpc/deepcam/mini"
+            local_batch_size = 8
+            self.extra_resources = {
+                "qos": {"qos": "gpu-exc"},
+                "gpu": {"num_gpus_per_node": str(self.num_gpus)},
+            }
         elif part == "cirrus:compute-gpu":
             self.modules = ["nvidia/cudnn/8.6.0-cuda-11.6"]
             data_dir_prefix = "/work/z04/shared/mlperf-hpc/deepcam/mini/"
+            local_batch_size = 1
+            self.extra_resources = {
+                "qos": {"qos": "gpu"},
+                "gpu": {"num_gpus_per_node": str(self.num_gpus)},
+            }
         self.executable_opts = [
             train_script,
             "--wireup_method nccl-slurm",
             "--run_tag reframe-gpu",
             "--output_dir ${JOB_OUTPUT_PATH}",
             f"--data_dir_prefix {data_dir_prefix}",
-            "--local_batch_size 8",
+            f"--local_batch_size {local_batch_size}",
             "--max_epochs 5"
         ]
-        self.extra_resources = {
-            "qos": {"qos": "gpu-exc"},
-            "gpu": {"num_gpus_per_node": str(self.num_gpus)},
-        }
         self.env_vars = {
             "OMP_NUM_THREADS": "1",
             "HOME": "${HOME/home/work}",
@@ -94,6 +100,7 @@ class DeepCAMCPUtest(DeepCAMBase):
             "--output_dir ${JOB_OUTPUT_PATH}",
             "--data_dir_prefix /work/z19/shared/mlperf-hpc/deepcam/mini",
             "--local_batch_size 1",
+            "--max_inter_threads ${SLURM_CPUS_PER_TASK}"
             "--max_epochs 5",
             "--seed ${SLURM_JOB_ID}",
         ]

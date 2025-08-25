@@ -23,25 +23,22 @@ class fetch_mlperf_hpc_benchmarks(rfm.RunOnlyRegressionTest):
         return sn.assert_not_found("ERROR", self.stderr)
 
 
-
 class BuildMLPerfPytorchEnv(rfm.CompileOnlyRegressionTest):
     build_system = "CustomBuild"
-    # local = True     
-    # valid_systems = ["archer2:compute-gpu", "archer2:compute"]
-    # valid_prog_environs = ["rocm-PrgEnv-cray", "PrgEnv-cray"]
-
     @run_before("compile")
     def prepare_env(self):
         part = self.current_partition.fullname
 
-        if part == "archer2:compute-gpu":
+        # Check if this is still needed: 
+        if part == "cirrus:compute-gpu": 
+            self.prerun_cmds = ["module unload openmpi"]
+        if part in ("archer2:compute-gpu", "cirrus:compute-gpu"):
             self.modules = ["pytorch/1.13.1-gpu"]
             self.env_vars["PYVENV_NAME"] = "reframe-mlperf-gpu"
         elif part == "archer2:compute":
             self.modules = ["pytorch/1.13.0a0"]
             self.env_vars["PYVENV_NAME"] = "reframe-mlperf-cpu"
 
-        # Commands executed during the build stage
         self.build_system.commands = [
             "chmod u+x build_pytorch_env.sh",
             "./build_pytorch_env.sh"
