@@ -3,14 +3,14 @@
 import reframe as rfm
 import reframe.utility.sanity as sn
 
-from mlperf_build import fetch_mlperf_hpc_benchmarks
+from mlperf_build import MLPerfHPCFetchBenchmarks
 from mlperf_build import BuildMLPerfPytorchEnv
 
 
 class MLPerfBase(rfm.RunOnlyRegressionTest):
     """Base module for MLPerf tests"""
     executable = "python"
-    mlperf_benchmarks = fixture(fetch_mlperf_hpc_benchmarks, scope='session')
+    mlperf_benchmarks = fixture(MLPerfHPCFetchBenchmarks, scope='session')
 
 
 class DeepCAMBase(MLPerfBase):

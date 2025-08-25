@@ -1,8 +1,10 @@
+"""ReFrame tests for MLPerf HPC's DeepCAM"""
+
 import os
 import reframe as rfm
-import reframe.utility.sanity as sn
-import reframe.utility.udeps as udeps
+
 from mlperf_base import DeepCAMBase
+
 
 @rfm.simple_test
 class DeepCAMGPUtest(DeepCAMBase):
@@ -15,12 +17,13 @@ class DeepCAMGPUtest(DeepCAMBase):
     valid_systems = ["archer2:compute-gpu", "cirrus:compute-gpu"]
     valid_prog_environs = ["rocm-PrgEnv-cray", "Default"]
     reference = {
-        "archer2:compute-gpu": {"epoch-time": (40, -1.0, 1.0, "s")}, 
-        "cirrus:compute-gpu": {"epoch-time": (54, -1.0, 1.0, "s")} 
+        "archer2:compute-gpu": {"epoch-time": (40, -1.0, 1.0, "s")},
+        "cirrus:compute-gpu": {"epoch-time": (54, -1.0, 1.0, "s")}
     }
 
     @run_after('setup')
     def setup_job(self):
+        """Set-up submission script"""
         train_script = os.path.join(
             self.mlperf_benchmarks.stagedir,
             "hpc", "deepcam", "src", "deepCam", "train.py"
@@ -56,20 +59,21 @@ class DeepCAMGPUtest(DeepCAMBase):
             "JOB_OUTPUT_PATH": "./results/${SLURM_JOB_ID}"
         }
         activate_pytorch = os.path.join(
-            self.pytorch_env.stagedir, 
+            self.pytorch_env.stagedir,
             "reframe-mlperf-gpu", "reframe-mlperf-gpu", "bin", "activate"
         )
         self.prerun_cmds = [
             f"source {activate_pytorch}",
-            "mkdir -p ${JOB_OUTPUT_PATH}/logs" 
+            "mkdir -p ${JOB_OUTPUT_PATH}/logs"
         ]
 
     @run_before('run')
     def add_additional_options(self):
+        """Add additional options to the job launcher"""
         self.job.launcher.options += [
             f"--ntasks={self.num_gpus}",
             f"--tasks-per-node={self.num_gpus_per_node}",
-            "--hint=nomultithread",        
+            "--hint=nomultithread",
         ]
         self.job.options = [f"--nodes={self.num_nodes}", "--exclusive"]
 
@@ -89,6 +93,7 @@ class DeepCAMCPUtest(DeepCAMBase):
 
     @run_after('setup')
     def setup_job(self):
+        """Set-up submission script"""
         train_script = os.path.join(
             self.mlperf_benchmarks.stagedir,
             "hpc", "deepcam", "src", "deepCam", "train.py"
@@ -111,20 +116,19 @@ class DeepCAMCPUtest(DeepCAMBase):
             "SRUN_CPUS_PER_TASK": "${SLURM_CPUS_PER_TASK}"
         }
         activate_pytorch = os.path.join(
-            self.pytorch_env.stagedir, 
+            self.pytorch_env.stagedir,
             "reframe-mlperf-cpu", "reframe-mlperf-cpu", "bin", "activate"
         )
         self.prerun_cmds = [
             f"source {activate_pytorch}",
-            "mkdir -p ${JOB_OUTPUT_PATH}/logs" 
+            "mkdir -p ${JOB_OUTPUT_PATH}/logs"
         ]
-
-# Max inter threads?? 
 
     @run_before('run')
     def add_srun_options(self):
+        """Add additional options to the job launcher"""
         self.job.launcher.options += [
             f"--ntasks={self.num_tasks}",
             f"--tasks-per-node={self.num_tasks_per_node}",
-            "--hint=nomultithread",        
+            "--hint=nomultithread",
         ]

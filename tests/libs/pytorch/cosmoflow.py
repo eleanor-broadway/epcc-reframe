@@ -1,9 +1,11 @@
+"""ReFrame tests for MLPerf HPC's CosmoFlow"""
+
 import os
 import reframe as rfm
 import reframe.utility.sanity as sn
-import reframe.utility.udeps as udeps
 
 from mlperf_base import MLPerfBase
+
 
 @rfm.simple_test
 class CosmoFlowCPUtest(MLPerfBase):
@@ -30,15 +32,17 @@ class CosmoFlowCPUtest(MLPerfBase):
             self.num_cpus_per_task = 18
 
     @performance_function("s", perf_key="total-epochs-time")
-    def extract_time(self): 
-        return sn.extractsingle(r"Total epoch time:\s+(\S+)",
+    def extract_time(self):
+        """Return total epoch time"""
+        return sn.extractsingle(
+            r"Total epoch time:\s+(\S+)",
             self.stderr,
-            tag=1, 
+            tag=1,
             conv=float,
-        ) 
+        )
 
     reference = {
-        "archer2:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")}, 
+        "archer2:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")},
         "cirrus:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")}}
 
     @sanity_function
@@ -48,21 +52,23 @@ class CosmoFlowCPUtest(MLPerfBase):
 
     @run_after('setup')
     def setup_job(self):
+        """Set-up submission script"""
         part = self.current_partition.fullname
 
         if part == "archer2:compute":
             data_dir_prefix = "/work/z19/shared/mlperf-hpc/cosmoflow/mini/cosmoUniverse_2019_05_4parE_tf_v2_mini"
             self.env_vars = {
-                "UCX_MEMTYPE_CACHE": "n", 
+                "UCX_MEMTYPE_CACHE": "n",
                 "MPICH_DPM_DIR": "${SLURM_SUBMIT_DIR}/dpmdir",
-                f"OMP_NUM_THREADS": "{num_cpus_per_task}",
+                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
                 "TF_ENABLE_ONEDNN_OPTS": "1"
             }
+    # f"OMP_NUM_THREADS": "{num_cpus_per_task}",
 
         elif part == "cirrus:compute":
             data_dir_prefix = "/work/z04/shared/mlperf-hpc/cosmoflow/mini/cosmoUniverse_2019_05_4parE_tf_v2_mini"
             self.env_vars = {
-                f"OMP_NUM_THREADS": "{num_cpus_per_task}",
+                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
                 "TF_ENABLE_ONEDNN_OPTS": "1"
             }
 
@@ -81,17 +87,18 @@ class CosmoFlowCPUtest(MLPerfBase):
             "--omp-num-threads ${OMP_NUM_THREADS}",
             "--inter-threads 0",
             "--intra-threads 0",
-            "--n-train 32", 
+            "--n-train 32",
             "--n-valid 32",
             f"--data-dir {data_dir_prefix}"
         ]
 
     @run_before('run')
     def add_srun_options(self):
+        """Add additional options to the job launcher"""
         part = self.current_partition.fullname
         self.job.launcher.options += [
-            "--hint=nomultithread", 
-            "--distribution=block:block"       
+            "--hint=nomultithread",
+            "--distribution=block:block"
         ]
         if part == "archer2:compute":
             self.job.launcher.options += ["--cpu-freq=2250000"]
