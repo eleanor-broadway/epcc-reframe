@@ -12,8 +12,12 @@ class DeepCAMGPUtest(DeepCAMBase):
     num_gpus = 4
     num_gpus_per_node = 4
     time_limit = "1h"
-    valid_systems = ["archer2:compute-gpu"]
-    valid_prog_environs = ["rocm-PrgEnv-cray"]
+    valid_systems = ["archer2:compute-gpu", "cirrus:compute-gpu"]
+    valid_prog_environs = ["rocm-PrgEnv-cray", "nvidia-mpi"]
+    reference = {
+        "archer2:compute-gpu": {"epoch-time": (40, -1.0, 1.0, "s")} 
+        "cirrus:compute-gpu": {"epoch-time": (54, -1.0, 1.0, "s")} 
+    }
 
     @run_after('setup')
     def setup_job(self):
@@ -21,12 +25,18 @@ class DeepCAMGPUtest(DeepCAMBase):
             self.mlperf_benchmarks.stagedir,
             "hpc", "deepcam", "src", "deepCam", "train.py"
         )
+        part = self.current_partition.fullname
+        if part == "archer2:compute-gpu":
+            data_dir_prefix = "/work/z19/shared/mlperf-hpc/deepcam/mini"
+        elif part == "cirrus:compute-gpu":
+            self.modules = ["nvidia/cudnn/8.6.0-cuda-11.6"]
+            data_dir_prefix = "/work/z04/shared/mlperf-hpc/deepcam/mini/"
         self.executable_opts = [
             train_script,
             "--wireup_method nccl-slurm",
             "--run_tag reframe-gpu",
             "--output_dir ${JOB_OUTPUT_PATH}",
-            "--data_dir_prefix /work/z19/shared/mlperf-hpc/deepcam/mini",
+            f"--data_dir_prefix {data_dir_prefix}",
             "--local_batch_size 8",
             "--max_epochs 5"
         ]
@@ -69,6 +79,7 @@ class DeepCAMCPUtest(DeepCAMBase):
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-cray"]
     extra_resources = {"qos": {"qos": "standard"}}
+    reference = {"archer2:compute": {"epoch-time": (272, -1.0, 1.0, "s")}}
 
     @run_after('setup')
     def setup_job(self):
@@ -100,6 +111,8 @@ class DeepCAMCPUtest(DeepCAMBase):
             f"source {activate_pytorch}",
             "mkdir -p ${JOB_OUTPUT_PATH}/logs" 
         ]
+
+# Max inter threads?? 
 
     @run_before('run')
     def add_srun_options(self):

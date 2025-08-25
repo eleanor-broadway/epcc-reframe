@@ -13,19 +13,14 @@ class MLPerfBase(rfm.RunOnlyRegressionTest):
 class DeepCAMBase(MLPerfBase):
 
     pytorch_env = fixture(BuildMLPerfPytorchEnv, scope='environment')
-
+    
     @performance_function("s", perf_key="epoch-time")
     def extract_time(self): 
         return sn.extractsingle(r'Time For Epoch 5 : (\S+) s',
             self.stdout,
             tag=1, 
             conv=float,
-        ) 
-
-    reference = {
-        "archer2:compute": {"epoch-time": (272, -1.0, 1.0, "s")},
-        "archer2:compute-gpu": {"epoch-time": (40, -1.0, 1.0, "s")} 
-    }
+        )
 
     @sanity_function
     def assert_finished(self):
