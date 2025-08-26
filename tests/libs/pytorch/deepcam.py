@@ -17,8 +17,8 @@ class DeepCAMGPUtest(DeepCAMBase):
     valid_systems = ["archer2:compute-gpu", "cirrus:compute-gpu"]
     valid_prog_environs = ["rocm-PrgEnv-cray", "Default"]
     reference = {
-        "archer2:compute-gpu": {"epoch-time": (40, -1.0, 1.0, "s")},
-        "cirrus:compute-gpu": {"epoch-time": (54, -1.0, 1.0, "s")}
+        "archer2:compute-gpu": {"epoch-time": (40, -0.1, 0.1, "s")},
+        "cirrus:compute-gpu": {"epoch-time": (74, -0.1, 0.1, "s")}
     }
 
     @run_after('setup')
@@ -89,7 +89,9 @@ class DeepCAMCPUtest(DeepCAMBase):
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-cray"]
     extra_resources = {"qos": {"qos": "standard"}}
-    reference = {"archer2:compute": {"epoch-time": (272, -1.0, 1.0, "s")}}
+    reference = {
+        "archer2:compute": {"epoch-time": (272, -0.1, 0.1, "s")}
+    }
 
     @run_after('setup')
     def setup_job(self):
@@ -105,7 +107,7 @@ class DeepCAMCPUtest(DeepCAMBase):
             "--output_dir ${JOB_OUTPUT_PATH}",
             "--data_dir_prefix /work/z19/shared/mlperf-hpc/deepcam/mini",
             "--local_batch_size 1",
-            "--max_inter_threads ${SLURM_CPUS_PER_TASK}"
+            "--max_inter_threads ${SLURM_CPUS_PER_TASK}",
             "--max_epochs 5",
             "--seed ${SLURM_JOB_ID}",
         ]

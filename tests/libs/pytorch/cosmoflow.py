@@ -43,7 +43,8 @@ class CosmoFlowCPUtest(MLPerfBase):
 
     reference = {
         "archer2:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")},
-        "cirrus:compute": {"total-epochs-time": (446, -0.1, 0.1, "s")}}
+        "cirrus:compute": {"total-epochs-time": (311, -0.1, 0.1, "s")}
+    }
 
     @sanity_function
     def assert_finished(self):

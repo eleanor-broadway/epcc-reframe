@@ -18,7 +18,7 @@ class MLPerfHPCFetchBenchmarks(rfm.RunOnlyRegressionTest):
 
         self.prerun_cmds = [
             f"git clone https://github.com/mlcommons/hpc.git {repo_dir}",
-            f"cp deepcam-modified-train.py {target_dir}/train.py",
+            f"cp deepcam-modified-train.txt {target_dir}/train.py",
             (
                 "sed -i 's/torch\\.cuda\\.synchronize()/"
                 "if torch.cuda.is_available(): torch.cuda.synchronize()/' "
