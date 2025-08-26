@@ -80,17 +80,17 @@ class OpenFoamDamnBreak(OpenFoamBaseCheck):
                 "SLURM_CPU_FREQ_REQ": self.freq,
             }
 
-
     @run_before("run")
     def setup_testcase(self):
-        """set up test case """
-        self.prerun_cmds = ["source ${FOAM_INSTALL_DIR}/etc/bashrc",
-                            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
-                            "cd damBreak",
-                            "blockMesh",
-                            "cp 0/alpha.water.orig 0/alpha.water",
-                            "setFields"]
-        
+        """set up test case"""
+        self.prerun_cmds = [
+            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
+            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
+            "cd damBreak",
+            "blockMesh",
+            "cp 0/alpha.water.orig 0/alpha.water",
+            "setFields",
+        ]
 
     @run_before("performance")
     def set_reference(self):
@@ -98,6 +98,7 @@ class OpenFoamDamnBreak(OpenFoamBaseCheck):
         if self.current_system.name in ["archer2"]:
             # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
             self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
+
 
 @rfm.simple_test
 class OpenFoamDamnBreakParallel(OpenFoamBaseCheck):
@@ -135,17 +136,18 @@ class OpenFoamDamnBreakParallel(OpenFoamBaseCheck):
                 "SLURM_CPU_FREQ_REQ": self.freq,
             }
 
-
     @run_before("run")
     def setup_testcase(self):
-        """set up test case """
-        self.prerun_cmds = ["source ${FOAM_INSTALL_DIR}/etc/bashrc",
-                            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
-                            "cd damBreak",
-                            "blockMesh",
-                            "cp 0/alpha.water.orig 0/alpha.water",
-                            "setFields",
-                            "decomposePar"]
+        """set up test case"""
+        self.prerun_cmds = [
+            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
+            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
+            "cd damBreak",
+            "blockMesh",
+            "cp 0/alpha.water.orig 0/alpha.water",
+            "setFields",
+            "decomposePar",
+        ]
 
     @sanity_function
     def assert_finished_parallel(self):

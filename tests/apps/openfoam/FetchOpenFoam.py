@@ -16,18 +16,19 @@ import reframe.utility.udeps as udeps
 @rfm.simple_test
 class FetchOpenFoam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
+
     version = variable(str, value="v2412")
-    executable = 'wget'
+    executable = "wget"
     executable_opts = [
         f"https://sourceforge.net/projects/openfoam/files/{version}/OpenFOAM-{version}.tgz",
-        f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz"
+        f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz",
     ]
     local = True
-    valid_systems = ['archer2:login']
-    valid_prog_environs = ['PrgEnv-gnu']
+    valid_systems = ["archer2:login"]
+    valid_prog_environs = ["PrgEnv-gnu"]
 
     tags = {"fetch"}
 
     @sanity_function
     def validate_download(self):
-        return (sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz"))
+        return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")

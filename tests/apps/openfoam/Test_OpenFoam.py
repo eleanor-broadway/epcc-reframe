@@ -11,23 +11,25 @@ import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 
+
 class FetchOpenFoam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
+
     version = variable(str, value="v2412")
-    executable = 'wget'
+    executable = "wget"
     executable_opts = [
         f"https://sourceforge.net/projects/openfoam/files/{version}/OpenFOAM-{version}.tgz",
-        f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz"
+        f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz",
     ]
     local = True
-    valid_systems = ['archer2:login']
-    valid_prog_environs = ['PrgEnv-gnu']
+    valid_systems = ["archer2:login"]
+    valid_prog_environs = ["PrgEnv-gnu"]
 
     tags = {"fetch"}
 
     @sanity_function
     def validate_download(self):
-        return (sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz"))
+        return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
 
 
 class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
@@ -41,21 +43,17 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
 
     tags = {"compile"}
 
-    modules = ["gcc/11.2.0",
-               "mkl",
-               "cray-fftw"]
+    modules = ["gcc/11.2.0", "mkl", "cray-fftw"]
 
     build_prefix = ""
 
-    env_vars = {"FOAM_VERBOSE": "1",
-                "FFTW_ARCH_PATH": "${FFTW_DIR}"}
+    env_vars = {"FOAM_VERBOSE": "1", "FFTW_ARCH_PATH": "${FFTW_DIR}"}
 
     num_nodes = 1
     num_tasks_per_node = 1
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
     time_limit = "4h"
-
 
     @run_before("compile")
     def prepare_build(self):
@@ -104,14 +102,15 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
     def validate_compile(self):
         """Validate compilation by checking existance of binary"""
         return sn.assert_eq(0, 0)
-        
+
+
 @rfm.simple_test
 class TestOpenFoam(rfm.RunOnlyRegressionTest):
     """OpenFoam Test"""
 
     # Select system to use
     valid_systems = ["archer2:compute"]
-    
+
     # Set Programming Environment
     valid_prog_environs = ["PrgEnv-gnu"]
 
@@ -122,9 +121,7 @@ class TestOpenFoam(rfm.RunOnlyRegressionTest):
 
     compile_openfoam = fixture(CompileOpenFoam, scope="environment")
 
-    modules = ["gcc/11.2.0",
-               "mkl",
-               "cray-fftw"]
+    modules = ["gcc/11.2.0", "mkl", "cray-fftw"]
 
     version = "v2412"
 
@@ -163,26 +160,25 @@ class TestOpenFoam(rfm.RunOnlyRegressionTest):
                 "SLURM_CPU_FREQ_REQ": self.freq,
             }
 
-
     @run_before("run")
     def prepare_run(self):
         """set up job execution"""
-
 
         foam_install_dir = os.path.join(self.compile_openfoam.stagedir, self.compile_openfoam.build_prefix)
 
         print("foam_install_dir: ", foam_install_dir)
 
-        self.prerun_cmds = [ f"export FOAM_INSTALL_DIR={foam_install_dir}",
-                            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
-                            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
-                            "cd damBreak",
-                            "blockMesh",
-                            "cp -r 0.orig/ 0/",
-                            "cp 0/alpha.water 0/alpha.water.orig",
-                            "setFields",
-                            "decomposePar"]
-
+        self.prerun_cmds = [
+            f"export FOAM_INSTALL_DIR={foam_install_dir}",
+            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
+            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
+            "cd damBreak",
+            "blockMesh",
+            "cp -r 0.orig/ 0/",
+            "cp 0/alpha.water 0/alpha.water.orig",
+            "setFields",
+            "decomposePar",
+        ]
 
     @sanity_function
     def assert_finished(self):
@@ -198,4 +194,3 @@ class TestOpenFoam(rfm.RunOnlyRegressionTest):
             "time",
             float,
         )
-

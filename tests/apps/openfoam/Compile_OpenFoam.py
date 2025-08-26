@@ -11,23 +11,26 @@ import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 
+
 class FetchOpenFoam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
+
     version = variable(str, value="v2412")
-    executable = 'wget'
+    executable = "wget"
     executable_opts = [
         f"https://sourceforge.net/projects/openfoam/files/{version}/OpenFOAM-{version}.tgz",
-        f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz"
+        f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz",
     ]
     local = True
-    valid_systems = ['archer2:login']
-    valid_prog_environs = ['PrgEnv-gnu']
+    valid_systems = ["archer2:login"]
+    valid_prog_environs = ["PrgEnv-gnu"]
 
     tags = {"fetch"}
 
     @sanity_function
     def validate_download(self):
-        return (sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz"))
+        return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
+
 
 @rfm.simple_test
 class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
@@ -41,23 +44,17 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
 
     tags = {"compile"}
 
-    modules = ["gcc/11.2.0",
-               "mkl",
-               "cray-fftw"]
+    modules = ["gcc/11.2.0", "mkl", "cray-fftw"]
 
     build_prefix = ""
 
-    env_vars = {"FOAM_VERBOSE": "1",
-                "FFTW_ARCH_PATH": "${FFTW_DIR}"}
+    env_vars = {"FOAM_VERBOSE": "1", "FFTW_ARCH_PATH": "${FFTW_DIR}"}
 
     num_nodes = 1
     num_tasks_per_node = 1
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
     time_limit = "4h"
-    
-#    build_system.options = ["-v", "-n"]
-
 
     @run_before("compile")
     def prepare_build(self):
@@ -102,12 +99,7 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
 
         self.build_system.options = ["-v", "-n"]
 
-        self.postbuild_cmds = [
-
-
     @sanity_function
     def validate_compile(self):
         """Validate compilation by checking existance of binary"""
         return sn.assert_eq(0, 0)
-        
-
