@@ -12,7 +12,7 @@ import reframe.utility.sanity as sn
 
 
 @rfm.simple_test
-class Fetch_Open_Foam(rfm.RunOnlyRegressionTest):
+class FetchOpenFoam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
 
     version = variable(str, value="v2412")

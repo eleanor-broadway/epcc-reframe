@@ -12,7 +12,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-class Fetch_Open_Foam(rfm.RunOnlyRegressionTest):
+class FetchOpenFoam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
 
     version = variable(str, value="v2412")
@@ -29,15 +29,16 @@ class Fetch_Open_Foam(rfm.RunOnlyRegressionTest):
 
     @sanity_function
     def validate_download(self):
-        """Validate OenFoam Downloaded"""
+        """Validate OpenFoam Downloaded"""
         return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
 
 
-class Compile_Open_Foam(rfm.CompileOnlyRegressionTest):
+@rfm.simple_test
+class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
     """Test compilation of OpenFoam"""
 
     build_system = "Make"
-    fetch_openfoam = fixture(Fetch_Open_Foam, scope="environment")
+    fetch_openfoam = fixture(FetchOpenFoam, scope="environment")
 
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
@@ -103,95 +104,3 @@ class Compile_Open_Foam(rfm.CompileOnlyRegressionTest):
     def validate_compile(self):
         """Validate compilation by checking existance of binary"""
         return sn.assert_eq(0, 0)
-
-
-@rfm.simple_test
-class Test_Open_Foam(rfm.RunOnlyRegressionTest):
-    """OpenFoam Test"""
-
-    # Select system to use
-    valid_systems = ["archer2:compute"]
-
-    # Set Programming Environment
-    valid_prog_environs = ["PrgEnv-gnu"]
-
-    # Description of test
-    descr = "OpenFoam damnBreak"
-
-    tags = {"performance", "applications"}
-
-    compile_openfoam = fixture(Compile_Open_Foam, scope="environment")
-
-    modules = ["gcc/11.2.0", "mkl", "cray-fftw"]
-
-    version = "v2412"
-
-    # slurm parameters
-    num_nodes = 4
-    num_tasks_per_node = 1
-    num_cpus_per_task = 128
-    num_tasks = num_nodes * num_tasks_per_node
-    time_limit = "10m"
-
-    # different cpu frequencies
-    freq = parameter(["2250000", "2000000"])
-
-    # Output files to be retained
-    keep_files = ["rfm_job.out"]
-
-    # Identify the executable
-    executable = "interFoam"
-
-    # Command line options for executable
-    executable_opts = ["-parallel"]
-
-    reference_performance = {
-        "2000000": (4, -0.2, 0.2, "seconds"),
-        "2250000": (3, -0.2, 0.2, "seconds"),
-    }
-
-    @run_after("init")
-    def setup_params(self):
-        """sets up extra parameters"""
-        self.descr += self.freq
-        if self.current_system.name in ["archer2"]:
-            self.env_vars = {
-                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-                "OMP_PLACES": "cores",
-                "SLURM_CPU_FREQ_REQ": self.freq,
-            }
-
-    @run_before("run")
-    def prepare_run(self):
-        """set up job execution"""
-
-        foam_install_dir = os.path.join(self.compile_openfoam.stagedir, self.compile_openfoam.build_prefix)
-
-        print("foam_install_dir: ", foam_install_dir)
-
-        self.prerun_cmds = [
-            f"export FOAM_INSTALL_DIR={foam_install_dir}",
-            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
-            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
-            "cd damBreak",
-            "blockMesh",
-            "cp -r 0.orig/ 0/",
-            "cp 0/alpha.water 0/alpha.water.orig",
-            "setFields",
-            "decomposePar",
-        ]
-
-    @sanity_function
-    def assert_finished(self):
-        """Sanity check that simulation finished successfully"""
-        return sn.assert_found("End", self.keep_files[0])
-
-    @performance_function("seconds", perf_key="performance")
-    def extract_perf(self):
-        """Extract performance value to compare with reference value"""
-        return sn.extractsingle(
-            r"ExecutionTime\s+=\s+(?P<time>\d+.?\d*\s+)s\s+ClockTime\s+=\s+\d*\s+s\n\nEnd",
-            self.keep_files[0],
-            "time",
-            float,
-        )
