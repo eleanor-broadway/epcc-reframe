@@ -24,12 +24,6 @@ class CosmoFlowCPUtest(MLPerfBase):
     @run_after("init")
     def setup_cirrus_environment(self):
         """Setup environment for Cirrus, overriding ARCHER2 settings"""
-        # if self.current_system.name in ["archer2"]:
-        #     self.num_nodes = 1
-        #     self.num_tasks = 8
-        #     self.num_tasks_per_node = 8
-        #     self.num_cpus_per_task = 16
-
         if self.current_system.name in ["cirrus"]:
             self.num_nodes = 4
             self.num_tasks = 8
