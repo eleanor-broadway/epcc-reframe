@@ -12,7 +12,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-class FetchOpenFoam(rfm.RunOnlyRegressionTest):
+class Fetch_Open_Foam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
 
     version = variable(str, value="v2412")
@@ -29,14 +29,15 @@ class FetchOpenFoam(rfm.RunOnlyRegressionTest):
 
     @sanity_function
     def validate_download(self):
+        """Validate OenFoam Downloaded"""
         return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
 
 
-class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
+class Compile_Open_Foam(rfm.CompileOnlyRegressionTest):
     """Test compilation of OpenFoam"""
 
     build_system = "Make"
-    fetch_openfoam = fixture(FetchOpenFoam, scope="environment")
+    fetch_openfoam = fixture(Fetch_Open_Foam, scope="environment")
 
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
@@ -105,7 +106,7 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
 
 
 @rfm.simple_test
-class TestOpenFoam(rfm.RunOnlyRegressionTest):
+class Test_Open_Foam(rfm.RunOnlyRegressionTest):
     """OpenFoam Test"""
 
     # Select system to use
@@ -119,7 +120,7 @@ class TestOpenFoam(rfm.RunOnlyRegressionTest):
 
     tags = {"performance", "applications"}
 
-    compile_openfoam = fixture(CompileOpenFoam, scope="environment")
+    compile_openfoam = fixture(Compile_Open_Foam, scope="environment")
 
     modules = ["gcc/11.2.0", "mkl", "cray-fftw"]
 

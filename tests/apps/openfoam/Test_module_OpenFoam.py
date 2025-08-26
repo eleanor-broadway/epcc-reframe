@@ -6,7 +6,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-class OpenFoamBaseCheck(rfm.RunOnlyRegressionTest):
+class Open_Foam_Base_Check(rfm.RunOnlyRegressionTest):
     """ReFrame OpenFoam test base class"""
 
     # Which modules to load in test
@@ -45,7 +45,7 @@ class OpenFoamBaseCheck(rfm.RunOnlyRegressionTest):
 
 
 @rfm.simple_test
-class OpenFoamDamnBreak(OpenFoamBaseCheck):
+class Open_Foam_Damn_Break(Open_Foam_Base_Check):
     """OpenFoam Damn break test"""
 
     # Select system to use
@@ -101,7 +101,7 @@ class OpenFoamDamnBreak(OpenFoamBaseCheck):
 
 
 @rfm.simple_test
-class OpenFoamDamnBreakParallel(OpenFoamBaseCheck):
+class Open_Foam_Damn_Break_Parallel(Open_Foam_Base_Check):
     """OpenFoam Damn break test"""
 
     # Select system to use

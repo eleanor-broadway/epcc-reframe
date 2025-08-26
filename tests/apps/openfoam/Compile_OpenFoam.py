@@ -12,7 +12,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-class FetchOpenFoam(rfm.RunOnlyRegressionTest):
+class Fetch_Open_Foam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
 
     version = variable(str, value="v2412")
@@ -29,15 +29,16 @@ class FetchOpenFoam(rfm.RunOnlyRegressionTest):
 
     @sanity_function
     def validate_download(self):
+        """Validate OpenFoam Downloaded"""
         return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
 
 
 @rfm.simple_test
-class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
+class Compile_Open_Foam(rfm.CompileOnlyRegressionTest):
     """Test compilation of OpenFoam"""
 
     build_system = "Make"
-    fetch_openfoam = fixture(FetchOpenFoam, scope="environment")
+    fetch_openfoam = fixture(Fetch_Open_Foam, scope="environment")
 
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]

@@ -12,7 +12,7 @@ import reframe.utility.sanity as sn
 
 
 @rfm.simple_test
-class FetchOpenFoam(rfm.RunOnlyRegressionTest):
+class Fetch_Open_Foam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
 
     version = variable(str, value="v2412")
@@ -29,4 +29,5 @@ class FetchOpenFoam(rfm.RunOnlyRegressionTest):
 
     @sanity_function
     def validate_download(self):
+        """Validate openFoam Downloaded"""
         return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
