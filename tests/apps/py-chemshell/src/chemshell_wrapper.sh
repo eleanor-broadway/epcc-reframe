@@ -11,7 +11,7 @@ jobid=$( tail  -n 10 submit.log | sed -nE "s:.*job ([0-9]+).*:\1:p" ) # Get the 
 
 # Wait until job is no longer in the queue
 while [ "$(check_job_status)" -gt 0 ]; do
-    sleep 5  # Check every 5 seconds
+    sleep 30  # Check every 30 seconds
 done
 
 echo "Job $jobid has completed"
