@@ -9,19 +9,21 @@ from mlperf_build import BuildMLPerfPytorchEnv
 
 class MLPerfBase(rfm.RunOnlyRegressionTest):
     """Base module for MLPerf tests"""
+
     executable = "python"
-    mlperf_benchmarks = fixture(MLPerfHPCFetchBenchmarks, scope='session')
+    mlperf_benchmarks = fixture(MLPerfHPCFetchBenchmarks, scope="session")
 
 
 class DeepCAMBase(MLPerfBase):
     """Base module for DeepCAM MLPerf tests"""
-    pytorch_env = fixture(BuildMLPerfPytorchEnv, scope='environment')
+
+    pytorch_env = fixture(BuildMLPerfPytorchEnv, scope="environment")
 
     @performance_function("s", perf_key="epoch-time")
     def extract_time(self):
         """Return time for epoch 5"""
         return sn.extractsingle(
-            r'Time For Epoch 5 : (\S+) s',
+            r"Time For Epoch 5 : (\S+) s",
             self.stdout,
             tag=1,
             conv=float,

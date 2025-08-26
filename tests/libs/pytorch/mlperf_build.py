@@ -7,10 +7,11 @@ import reframe.utility.sanity as sn
 
 class MLPerfHPCFetchBenchmarks(rfm.RunOnlyRegressionTest):
     """Fetching the MLPerf HPC Benchmark Suite"""
+
     local = True
     executable = " "
 
-    @run_before('run')
+    @run_before("run")
     def prepare_deepcam(self):
         """Clone the repository and and make modifications"""
         repo_dir = os.path.join(self.stagedir, "hpc")
@@ -50,10 +51,7 @@ class BuildMLPerfPytorchEnv(rfm.CompileOnlyRegressionTest):
             self.modules = ["pytorch/1.13.0a0"]
             self.env_vars["PYVENV_NAME"] = "reframe-mlperf-cpu"
 
-        self.build_system.commands = [
-            "chmod u+x build_pytorch_env.sh",
-            "./build_pytorch_env.sh"
-        ]
+        self.build_system.commands = ["chmod u+x build_pytorch_env.sh", "./build_pytorch_env.sh"]
 
     @sanity_function
     def sanity_check_build(self):
