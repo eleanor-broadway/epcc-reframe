@@ -28,6 +28,8 @@ class DeepCAMGPUtest(DeepCAMBase):
             self.mlperf_benchmarks.stagedir,
             "hpc", "deepcam", "src", "deepCam", "train.py"
         )
+        data_dir_prefix = ""
+        local_batch_size = 1
         part = self.current_partition.fullname
         if part == "archer2:compute-gpu":
             data_dir_prefix = "/work/z19/shared/mlperf-hpc/deepcam/mini"

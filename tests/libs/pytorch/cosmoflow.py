@@ -15,15 +15,20 @@ class CosmoFlowCPUtest(MLPerfBase):
     valid_prog_environs = ["PrgEnv-cray", "gcc"]
     extra_resources = {"qos": {"qos": "standard"}}
     modules = ["tensorflow/2.13.0"]
+    num_nodes = 1
+    num_tasks = 8
+    num_tasks_per_node = 8
+    num_cpus_per_task = 16
+
 
     @run_after("init")
-    def setup_environment(self):
-        """Setup environment"""
-        if self.current_system.name in ["archer2"]:
-            self.num_nodes = 1
-            self.num_tasks = 8
-            self.num_tasks_per_node = 8
-            self.num_cpus_per_task = 16
+    def setup_cirrus_environment(self):
+        """Setup environment for Cirrus, overriding ARCHER2 settings"""
+        # if self.current_system.name in ["archer2"]:
+        #     self.num_nodes = 1
+        #     self.num_tasks = 8
+        #     self.num_tasks_per_node = 8
+        #     self.num_cpus_per_task = 16
 
         if self.current_system.name in ["cirrus"]:
             self.num_nodes = 4
@@ -55,7 +60,7 @@ class CosmoFlowCPUtest(MLPerfBase):
     def setup_job(self):
         """Set-up submission script"""
         part = self.current_partition.fullname
-
+        data_dir_prefix = ""
         if part == "archer2:compute":
             data_dir_prefix = "/work/z19/shared/mlperf-hpc/cosmoflow/mini/cosmoUniverse_2019_05_4parE_tf_v2_mini"
             self.env_vars = {
@@ -64,15 +69,12 @@ class CosmoFlowCPUtest(MLPerfBase):
                 "OMP_NUM_THREADS": str(self.num_cpus_per_task),
                 "TF_ENABLE_ONEDNN_OPTS": "1"
             }
-    # f"OMP_NUM_THREADS": "{num_cpus_per_task}",
-
         elif part == "cirrus:compute":
             data_dir_prefix = "/work/z04/shared/mlperf-hpc/cosmoflow/mini/cosmoUniverse_2019_05_4parE_tf_v2_mini"
             self.env_vars = {
                 "OMP_NUM_THREADS": str(self.num_cpus_per_task),
                 "TF_ENABLE_ONEDNN_OPTS": "1"
             }
-
         train_script = os.path.join(
             self.mlperf_benchmarks.stagedir,
             "hpc", "cosmoflow", "train.py"
