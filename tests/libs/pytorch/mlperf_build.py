@@ -25,8 +25,6 @@ class MLPerfHPCFetchBenchmarks(rfm.RunOnlyRegressionTest):
                 "if torch.cuda.is_available(): torch.cuda.synchronize()/' "
                 f"{target_dir}/utils/bnstats.py"
             ),
-            # f"sed -i 's/torch\\.cuda\\.synchronize()/if torch.cuda.is_available():
-            # torch.cuda.synchronize()/' {target_dir}/utils/bnstats.py",
         ]
 
     @sanity_function
