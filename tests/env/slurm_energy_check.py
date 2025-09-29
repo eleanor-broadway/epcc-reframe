@@ -26,7 +26,7 @@ class SlurmEnergy1nodeTest(rfm.RunOnlyRegressionTest):
     @sanity_function
     def assert_finished(self):
         """Sanity check that SLURM_CPU_FREQ_REQ is set"""
-        return sn.assert_found(f"\S+ J \S+ us", self.stdout)
+        return sn.assert_found(r"\S+ J \S+ us", self.stdout)
 
     @performance_function("J", perf_key="energy-diff")
     def extract_perf(self):
@@ -81,7 +81,7 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
     @sanity_function
     def assert_finished(self):
         """Sanity check that SLURM_CPU_FREQ_REQ is set"""
-        return sn.assert_found(f"", self.stdout)
+        return sn.assert_found("", self.stdout)
 
     @performance_function("J", perf_key="energy-diff")
     def extract_perf(self):
