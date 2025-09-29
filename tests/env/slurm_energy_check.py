@@ -7,7 +7,6 @@
 
 import reframe as rfm
 import reframe.utility.sanity as sn
-import numpy as np
 
 
 @rfm.simple_test
@@ -116,7 +115,7 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
 
         energy_counters_diff = 0
 
-        for i in np.arange(0, len(energy_counters), 2):
+        for i in range(0, len(energy_counters), 2):
             # print(energy_counters[i + 1] - energy_counters[i])
             energy_counters_diff += energy_counters[i + 1] - energy_counters[i]
 
