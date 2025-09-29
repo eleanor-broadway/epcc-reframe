@@ -39,23 +39,19 @@ class SlurmEnergy1nodeTest(rfm.RunOnlyRegressionTest):
             shell=True,
         )
 
-        # Extract counter energy, recorded in stdout 
+        # Extract counter energy, recorded in stdout
         energy_counters = sn.extractall(r"(?P<energy>[0-9]+)\sJ\s(?P<time>[0-9]+)\sus", self.stdout, "energy")
 
         # Extract energy from Slurm output
-        energy_slurm = sn.extractall_s(
-            r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$",
-            str(slurm.stdout),
-            "energy"
-        )
+        energy_slurm = sn.extractall_s(r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$", str(slurm.stdout), "energy")
 
-        # Difference in energy counters at start and end of job 
+        # Difference in energy counters at start and end of job
         energy_counters_diff = int(str(energy_counters[1])) - int(str(energy_counters[0]))
 
         # Difference in counter recording and slurm output
         diff = energy_counters_diff - int(str(energy_slurm[0]))
 
-        # Helpful debugging outputs: 
+        # Helpful debugging outputs:
         # print("jobid: ", jobid)
         # print("energy recorded by slurm: ", energy_slurm)
         # print("2x energy counter recordings: ", energy_counters)
@@ -90,7 +86,7 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
     @performance_function("J", perf_key="energy-diff")
     def extract_perf(self):
         """Extract energy from counters to compare with slurm and check diff is zero"""
-        
+
         jobid = self.job.jobid
         slurm = rfm.utility.osext.run_command(
             "sacct -j " + str(jobid) + " --format=JobID,ConsumedEnergy --noconvert | tr '\n' ' ' ",
@@ -116,11 +112,7 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
             energy_counters.append(int(str(energy[1])))
 
         # Extract energy from Slurm output
-        energy_slurm = sn.extractall_s(
-            r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$",
-            str(slurm.stdout),
-            "energy"
-        )
+        energy_slurm = sn.extractall_s(r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$", str(slurm.stdout), "energy")
 
         energy_counters_diff = 0
 
@@ -130,7 +122,7 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
 
         diff = energy_counters_diff - int(str(energy_slurm[0]))
 
-        # Helpful debugging outputs: 
+        # Helpful debugging outputs:
         # print("jobid: ", jobid)
         # print("nodelist output: ", nodelist_raw.stdout)
         # print("nodelist: ", nodelist)
