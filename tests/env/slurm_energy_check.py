@@ -104,10 +104,10 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
         energy_data = []
         energy_counters = []
 
-        for i, nodeid in enumerate(nodelist):
+        for nodeid in nodelist:
             energy_data.append(sn.extractall(r"(?P<energy>[0-9]+)\sJ\s(?P<time>[0-9]+)\sus", nodeid, "energy"))
 
-        for i, energy in enumerate(energy_data):
+        for energy in energy_data:
             energy_counters.append(int(str(energy[0])))
             energy_counters.append(int(str(energy[1])))
 
