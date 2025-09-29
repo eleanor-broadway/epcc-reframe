@@ -1,13 +1,9 @@
-#!/usr/bin/env python3
 """Reframe test to check that CPU target environment variable is correctly set"""
 
 # Based on work from:
 #   Copyright 2016-2020 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
 #   ReFrame Project Developers. See the top-level LICENSE file for details.
 #   SPDX-License-Identifier: BSD-3-Clause
-
-#  Hello! 
-#  Hello 2
 
 import reframe as rfm
 import reframe.utility.sanity as sn
@@ -25,43 +21,46 @@ class SlurmEnergy1nodeTest(rfm.RunOnlyRegressionTest):
 
     tags = {"production", "maintenance", "craype"}
 
-    reference = {"archer2:compute": {"energy diff": (0, -1, 1, "jouls")}}
+    reference = {"archer2:compute": {"energy-diff": (0, -1, 1, "J")}}
 
     @sanity_function
     def assert_finished(self):
         """Sanity check that SLURM_CPU_FREQ_REQ is set"""
         return sn.assert_found(f"\S+ J \S+ us", self.stdout)
 
-    @performance_function("energy diff", perf_key="performance")
+    @performance_function("J", perf_key="energy-diff")
     def extract_perf(self):
         """Extract energy from counters to compare with slurm and check diff is zero"""
+
         jobid = self.job.jobid
-        # print("jobid: ", jobid)
         slurm = rfm.utility.osext.run_command(
             "sacct -j " + str(jobid) + " --format=JobID,ConsumedEnergy --noconvert | tr '\n' ' ' ",
             check=True,
             shell=True,
         )
-        # print("slurm: ", slurm.stdout)
 
+        # Extract counter energy, recorded in stdout 
         energy_counters = sn.extractall(r"(?P<energy>[0-9]+)\sJ\s(?P<time>[0-9]+)\sus", self.stdout, "energy")
 
-        # print("energy counters: ", energy_counters)
-
+        # Extract energy from Slurm output
         energy_slurm = sn.extractall_s(
-            r"JobID\s+ConsumedEnergy\s+------------ --------------\s+[0-9]+\s+[0-9]+\s+[0-9]+.bat\+\s+[0-9]+\s+[0-9]+.ext\+\s+[0-9]+\s+[0-9]+.0\s+(?P<energy>[0-9]+)",
+            r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$",
             str(slurm.stdout),
-            "energy",
+            "energy"
         )
-        # print("energy slurm: ", energy_slurm)
 
+        # Difference in energy counters at start and end of job 
         energy_counters_diff = int(str(energy_counters[1])) - int(str(energy_counters[0]))
 
-        # print("energy counters diff: ", energy_counters_diff)
-
+        # Difference in counter recording and slurm output
         diff = energy_counters_diff - int(str(energy_slurm[0]))
 
-        # print("diff: ", diff)
+        # Helpful debugging outputs: 
+        # print("jobid: ", jobid)
+        # print("energy recorded by slurm: ", energy_slurm)
+        # print("2x energy counter recordings: ", energy_counters)
+        # print("Difference between the energy counters: ", energy_counters_diff)
+        # print("difference between counters and slurm: ", diff)
 
         return diff
 
@@ -81,24 +80,23 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
 
     tags = {"production", "maintenance", "craype"}
 
-    reference = {"archer2:compute": {"energy diff": (0, -1, 1, "jouls")}}
+    reference = {"archer2:compute": {"energy-diff": (0, -1, 1, "J")}}
 
     @sanity_function
     def assert_finished(self):
         """Sanity check that SLURM_CPU_FREQ_REQ is set"""
         return sn.assert_found(f"", self.stdout)
 
-    @performance_function("energy diff", perf_key="performance")
+    @performance_function("J", perf_key="energy-diff")
     def extract_perf(self):
         """Extract energy from counters to compare with slurm and check diff is zero"""
+        
         jobid = self.job.jobid
-        # print("jobid: ", jobid)
         slurm = rfm.utility.osext.run_command(
             "sacct -j " + str(jobid) + " --format=JobID,ConsumedEnergy --noconvert | tr '\n' ' ' ",
             check=True,
             shell=True,
         )
-        # print("slurm: ", slurm.stdout)
 
         nodelist_raw = rfm.utility.osext.run_command(
             "ls nid* | tr '\n' ',' | sed 's/,$//g'",
@@ -106,14 +104,8 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
             shell=True,
         )
 
-        # print("nodelist output: ", nodelist_raw.stdout)
-
         nodelist = list(nodelist_raw.stdout.split(","))
-
-        # print("nodelist: ", nodelist)
-
         energy_data = []
-
         energy_counters = []
 
         for i, nodeid in enumerate(nodelist):
@@ -123,14 +115,12 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
             energy_counters.append(int(str(energy[0])))
             energy_counters.append(int(str(energy[1])))
 
-        # print("energy counters: ", energy_counters)
-
+        # Extract energy from Slurm output
         energy_slurm = sn.extractall_s(
-            r"JobID\s+ConsumedEnergy\s+------------ --------------\s+[0-9]+\s+[0-9]+\s+[0-9]+.bat\+\s+[0-9]+\s+[0-9]+.ext\+\s+[0-9]+\s+[0-9]+.0\s+(?P<energy>[0-9]+)",
+            r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$",
             str(slurm.stdout),
-            "energy",
+            "energy"
         )
-        # print("energy slurm: ", energy_slurm)
 
         energy_counters_diff = 0
 
@@ -138,10 +128,15 @@ class SlurmEnergy4nodesTest(rfm.RunOnlyRegressionTest):
             # print(energy_counters[i + 1] - energy_counters[i])
             energy_counters_diff += energy_counters[i + 1] - energy_counters[i]
 
-        # print("energy counters diff: ", energy_counters_diff)
-
         diff = energy_counters_diff - int(str(energy_slurm[0]))
 
-        # print("diff: ", diff)
+        # Helpful debugging outputs: 
+        # print("jobid: ", jobid)
+        # print("nodelist output: ", nodelist_raw.stdout)
+        # print("nodelist: ", nodelist)
+        # print("energy recorded by slurm: ", energy_slurm)
+        # print("2x energy counter recordings: ", energy_counters)
+        # print("Difference between the energy counters: ", energy_counters_diff)
+        # print("difference between counters and slurm: ", diff)
 
         return diff
