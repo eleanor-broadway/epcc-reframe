@@ -66,40 +66,50 @@ class HalobenchBuildTest(rfm.RegressionTest):
 
     @run_before('compile')
     def prepare_build(self):
+        """Prepare build"""
         self.build_system.makefile = "Makefile-archer2"
 
     @sanity_function
     def validate(self):
+        """Validate"""
         return sn.assert_found(r'Finished', self.stdout)
 
     @performance_function('MB/s')
     def sendrecv(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[16]
 
     @performance_function('MB/s')
     def redblack(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[17]
 
     @performance_function('MB/s')
     def isend_recv_wait(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[18]
 
     @performance_function('MB/s')
     def irecv_send_wait(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[19]
 
     @performance_function('MB/s')
     def irecv_isend_wait_pairwise(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[20]
 
     @performance_function('MB/s')
     def irecv_isend_waitall(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[21]
 
     @performance_function('MB/s')
     def persistent_startall_waitall(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[22]
 
     @performance_function('MB/s')
     def neighbourhood_collective(self):
+        """Performance function"""
         return sn.extractall(r'bwidth\s=\s+(\S+)', self.stdout, 1, float)[23]
