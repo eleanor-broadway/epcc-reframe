@@ -30,27 +30,27 @@ Eight tests:
 #   SPDX-License-Identifier: BSD-3-Clause
 """
 
-import os
-
 import reframe as rfm
 import reframe.utility.sanity as sn
 
+
 @rfm.simple_test
-class halobench_build_test(rfm.RegressionTest):
+class HalobenchBuildTest(rfm.RegressionTest):
+    """Halobench build test class"""
 
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-cray"]
-    
+
     build_system = 'Make'
     sourcesdir = 'https://github.com/davidhenty/halobench.git'
     executable = './halobench'
-    
+
     num_nodes = 8
     num_tasks = 1024
     num_tasks_per_node = 128
     num_cpus_per_task = 1
     time_limit = "3m"
-    
+
     reference = {
         'archer2:compute': {
             'sendrecv':                     (668, -0.1, 0.1, 'MB/s'),
