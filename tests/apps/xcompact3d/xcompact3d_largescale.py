@@ -19,8 +19,7 @@ class XCompact3DLargeTest(XCompact3DBaseEnvironment):
     xcompact3d_binary = fixture(XCompact3DSourceBuild, scope="environment")
     tags = {"performance", "largescale", "applications"}
 
-    # num_nodes = 1024
-    num_nodes = 8
+    num_nodes = 1024
     num_tasks_per_node = 128
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
@@ -28,8 +27,7 @@ class XCompact3DLargeTest(XCompact3DBaseEnvironment):
     env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
 
     time_limit = "1h"
-    # executable_opts = ["input-1024.i3d"]
-    executable_opts = ["input-8.i3d"]
+    executable_opts = ["input-1024.i3d"]
 
     reference = {"archer2:compute": {"performance": (6.3, -0.2, 0.2, "seconds")}}
 
