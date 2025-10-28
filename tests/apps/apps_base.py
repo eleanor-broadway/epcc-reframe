@@ -117,7 +117,7 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
         )
 
         energy_slurm = sn.extractall_s(r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$", str(slurm.stdout), "energy")
-        
+
         return int(str(energy_slurm[0]))
 
     @performance_function("sec", perf_key="job_time")
