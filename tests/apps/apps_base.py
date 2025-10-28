@@ -1,13 +1,14 @@
 """IN DEV - ReFrame base module for applications tests"""
 
+import abc
+
 import reframe as rfm
 import reframe.utility.sanity as sn
-import reframe.utility.udeps as udeps
-import abc
+from reframe.utility import udeps
 
 
 @rfm.simple_test
-class AppsFetchBase(rfm.RunonlyRegressionTest):
+class AppsFetchBase(rfm.RunOnlyRegressionTest):
     """Reframe base class for accessing application code"""
 
     descr = "Fetch app code"
@@ -20,6 +21,7 @@ class AppsFetchBase(rfm.RunonlyRegressionTest):
 
     @sanity_function
     def validate_download(self):
+        """Validate the download was successful"""
         return sn.assert_eq(self.job.exitcode, 0)
 
 
@@ -35,6 +37,7 @@ class AppsCompileBase(rfm.CompileOnlyRegressionTest, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     @run_after("init")
     def add_dependencies(self):
+        """Add any dependancies needed"""
         self.depends_on("", udeps.fully)
 
     @sanity_function
@@ -46,7 +49,7 @@ class AppsCompileBase(rfm.CompileOnlyRegressionTest, metaclass=abc.ABCMeta):
     @sanity_function
     def validate_compilation_executable_produced(self):
         """Sanity check that software compiled correctly"""
-        pass
+        return sn.assert_found("All done!", self.stdout)
 
 
 @rfm.simple_test
@@ -86,13 +89,13 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     @sanity_function
     def validate_run_finished(self) -> bool:
         """Sanity check that simulation finished successfully"""
-        pass
+        return sn.assert_found("All done!", self.stdout)
 
     @abc.abstractmethod
     @sanity_function
     def assert_correctness(self) -> bool:
         """Sanity check that simulation finished correctly"""
-        pass
+        return sn.assert_found("All done!", self.stdout)
 
     # Application performance check
 
@@ -101,7 +104,7 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     def extract_performance(self):
         """Extract performance value to compare with reference value"""
         # return sn.extractsingle("","")
-        pass
+        return sn.assert_found("All done!", self.stdout)
 
     # Job performance tests
 
