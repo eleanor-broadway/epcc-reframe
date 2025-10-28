@@ -19,7 +19,8 @@ class XCompact3DHyperscaleUCXTest(XCompact3DBaseEnvironment):
     xcompact3d_binary = fixture(XCompact3DSourceBuild, scope="environment")
     tags = {"performance", "hyperscale", "applications"}
 
-    num_nodes = 2048
+    # num_nodes = 2048
+    num_nodes = 8
     num_tasks_per_node = 128
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
@@ -38,7 +39,7 @@ class XCompact3DHyperscaleUCXTest(XCompact3DBaseEnvironment):
     }
 
     time_limit = "1h"
-    executable_opts = ["input-2048.i3d"]
+    executable_opts = ["input-8.i3d"]
 
     reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
 

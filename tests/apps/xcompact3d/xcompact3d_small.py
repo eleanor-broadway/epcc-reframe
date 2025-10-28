@@ -26,16 +26,17 @@ class XCompact3DSmallTest(XCompact3DBaseEnvironment):
 
     env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
 
-    extra_resources = {
-        "qos": {"qos": "short"},
-    }
-
     time_limit = "20m"
     executable_opts = ["input-8.i3d"]
 
-    reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
+    reference = {"archer2:compute": {"performance": (6.3, -0.2, 0.2, "seconds")}}
 
     @run_after("setup")
     def set_executable(self):
         """Sets up executable"""
         self.executable = os.path.join(self.xcompact3d_binary.stagedir, "Incompact3d/bin/xcompact3d")
+
+
+if QEBaseEnvironment.qe_version == "7.1":
+        reference = {"archer2:compute": {"PWSCF_wall": (260.0, -0.1, 0.1, "s")}}
+
