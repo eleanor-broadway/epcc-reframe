@@ -25,7 +25,7 @@ class XCompact3DHyperscaleUCXTest(XCompact3DBaseEnvironment):
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
 
-    modules = ["craype-network-ucx"]
+    modules = ["craype-network-ucx", "cray-mpich-ucx"]
 
     env_vars = {
         "OMP_NUM_THREADS": str(num_cpus_per_task),
@@ -41,7 +41,7 @@ class XCompact3DHyperscaleUCXTest(XCompact3DBaseEnvironment):
     time_limit = "1h"
     executable_opts = ["input-8.i3d"]
 
-    reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
+    reference = {"archer2:compute": {"performance": (6.3, -0.2, 0.2, "seconds")}}
 
     @run_after("setup")
     def set_executable(self):

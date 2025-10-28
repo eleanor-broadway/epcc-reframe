@@ -31,7 +31,7 @@ class XCompact3DLargeTest(XCompact3DBaseEnvironment):
     # executable_opts = ["input-1024.i3d"]
     executable_opts = ["input-8.i3d"]
 
-    reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
+    reference = {"archer2:compute": {"performance": (6.3, -0.2, 0.2, "seconds")}}
 
     @run_after("setup")
     def set_executable(self):
