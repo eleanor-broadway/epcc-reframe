@@ -1,4 +1,4 @@
-"""Largescale reframe test for XCompact3D"""
+"""Hyperscale reframe test for XCompact3D"""
 
 # Based on original work from:
 #   Copyright 2016-2022 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
@@ -13,21 +13,32 @@ from xcompact3d_build import XCompact3DSourceBuild
 
 
 @rfm.simple_test
-class XCompact3DLargeTest(XCompact3DBaseEnvironment):
-    """Using the source build, run a largescale XCompact3D test"""
+class XCompact3DHyperscaleUCXTest(XCompact3DBaseEnvironment):
+    """Using the source build, run a hyperscale XCompact3D test with UCX"""
 
     xcompact3d_binary = fixture(XCompact3DSourceBuild, scope="environment")
-    tags = {"performance", "largescale", "applications"}
+    tags = {"performance", "hyperscale", "applications"}
 
-    num_nodes = 1024
+    num_nodes = 2048
     num_tasks_per_node = 128
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
 
-    env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
+    modules = ["craype-network-ucx"]
 
-    time_limit = "5m"
-    executable_opts = ["input-1024.i3d"]
+    env_vars = {
+        "OMP_NUM_THREADS": str(num_cpus_per_task),
+        "UCX_TLS": "dc,self,sm",
+        "UCX_DC_MLX5_RX_QUEUE_LEN": "20000",
+        "UCX_DC_RX_QUEUE_LEN": "20000",
+        "UCX_DC_MLX5_TIMEOUT": "20m",
+        "UCX_DC_TIMEOUT": "20m",
+        "UCX_UD_MLX5_TX_NUM_GET_BYTES": "1G",
+        "UCX_UD_MLX5_MAX_GET_ZCOPY": "128k",
+    }
+
+    time_limit = "1h"
+    executable_opts = ["input-2048.i3d"]
 
     reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
 

@@ -1,23 +1,21 @@
-"""ReFrame base module for applications tests"""
+"""IN DEV - ReFrame base module for applications tests"""
 
 import reframe as rfm
 import reframe.utility.sanity as sn
 import abc
 
 
-
 @rfm.simple_test
 class AppsFetchBase(rfm.RunonlyRegressionTest):
     """Reframe base class for accessing application code"""
-    descr = 'Fetch app code'
-    version = variable(str, value='7.3')
-    executable = 'wget'
-    executable_opts = [
-        f'app-{version}'
-    ]
+
+    descr = "Fetch app code"
+    version = variable(str, value="7.3")
+    executable = "wget"
+    executable_opts = [f"app-{version}"]
     local = True
-    valid_systems = ['']
-    valid_prog_environs = ['']
+    valid_systems = [""]
+    valid_prog_environs = [""]
 
     @sanity_function
     def validate_download(self):
@@ -27,15 +25,16 @@ class AppsFetchBase(rfm.RunonlyRegressionTest):
 @rfm.simple_test
 class AppsCompileBase(rfm.CompileOnlyRegressionTest, metaclass=abc.ABCMeta):
     """Reframe base class for application compilation tests"""
-    descr = 'Build app'
-    build_system = ''
-    valid_systems = ['']
-    valid_prog_environs = ['']
+
+    descr = "Build app"
+    build_system = ""
+    valid_systems = [""]
+    valid_prog_environs = [""]
 
     @abc.abstractmethod
-    @run_after('init')
+    @run_after("init")
     def add_dependencies(self):
-        self.depends_on('', udeps.fully)
+        self.depends_on("", udeps.fully)
 
     @sanity_function
     def validate_compilation_no_errors(self):
@@ -53,17 +52,17 @@ class AppsCompileBase(rfm.CompileOnlyRegressionTest, metaclass=abc.ABCMeta):
 class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     """ReFrame base class for applications execution tests"""
 
-    # Test classifications 
-    tags = {""} # { "applications", "performance", "largescale", "hugescale"}
+    # Test classifications
+    tags = {""}  # { "applications", "performance", "largescale", "hugescale"}
 
     # Test environments
     valid_prog_environs = [""]
-    
-    #Test executables 
+
+    # Test executables
     executable = ""
 
     #
-    extra_resources = {""} # {"qos": {"qos": "standard"}}
+    extra_resources = {""}  # {"qos": {"qos": "standard"}}
     strict_check = True
 
     # Depency
@@ -73,8 +72,7 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     keep_files = [""]
 
     # Info
-    maintainers =[""]
-
+    maintainers = [""]
 
     # Sanity checks
 
@@ -88,7 +86,7 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     def validate_run_finished(self) -> bool:
         """Sanity check that simulation finished successfully"""
         pass
-    
+
     @abc.abstractmethod
     @sanity_function
     def assert_correctness(self) -> bool:
@@ -101,9 +99,8 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     @performance_function("app", perf_key="performance")
     def extract_performance(self):
         """Extract performance value to compare with reference value"""
-        #return sn.extractsingle("","")
+        # return sn.extractsingle("","")
         pass
-
 
     # Job performance tests
 
@@ -111,7 +108,7 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     def extract_job_energy(self):
         """Extract value of energy used in job from slurm"""
         jobid = self.job.jobid
-    
+
         slurm = rfm.utility.osext.run_command(
             "sacct -j " + str(jobid) + " --format=JobID,ConsumedEnergy --noconvert | tr '\n' ' ' ",
             check=True,
@@ -129,5 +126,3 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
     def extract_job_time(self):
         """Extract value of the duration of the job from slurm"""
         return self.completion_time
-
-

@@ -25,7 +25,15 @@ site_configuration = {
                     "descr": "Login nodes",
                     "scheduler": "local",
                     "launcher": "local",
-                    "environs": ["Default", "PrgEnv-gnu", "PrgEnv-cray", "PrgEnv-aocc", "PrgEnv-gnu-hf", "PrgEnv-cray-hf", "PrgEnv-aocc-hf"],
+                    "environs": [
+                        "Default",
+                        "PrgEnv-gnu",
+                        "PrgEnv-cray",
+                        "PrgEnv-aocc",
+                        "PrgEnv-gnu-hf",
+                        "PrgEnv-cray-hf",
+                        "PrgEnv-aocc-hf",
+                    ],
                 },
                 {
                     "name": "compute",
@@ -38,7 +46,14 @@ site_configuration = {
                         "--partition=standard",
                         "--qos=standard",
                     ],
-                    "environs": ["PrgEnv-gnu", "PrgEnv-cray", "PrgEnv-aocc", "PrgEnv-gnu-hf", "PrgEnv-cray-hf", "PrgEnv-aocc-hf"],
+                    "environs": [
+                        "PrgEnv-gnu",
+                        "PrgEnv-cray",
+                        "PrgEnv-aocc",
+                        "PrgEnv-gnu-hf",
+                        "PrgEnv-cray-hf",
+                        "PrgEnv-aocc-hf",
+                    ],
                     "max_jobs": 64,
                     "processor": {
                         "num_cpus": 128,

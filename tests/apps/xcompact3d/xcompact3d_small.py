@@ -14,23 +14,23 @@ from xcompact3d_build import XCompact3DSourceBuild
 
 @rfm.simple_test
 class XCompact3DSmallTest(XCompact3DBaseEnvironment):
-    """Using the source build, run a small XCompact3D test on ARCHER2"""
+    """Using the source build, run a small XCompact3D test"""
 
     xcompact3d_binary = fixture(XCompact3DSourceBuild, scope="environment")
     tags = {"applications", "performance", "short"}
 
     num_nodes = 8
     num_tasks_per_node = 128
-    # move?
     num_cpus_per_task = 1
-    # What happens if we move this:
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
-    # move?
+
     env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
 
-    qos = "short"
+    extra_resources = {
+        "qos": {"qos": "short"},
+    }
 
-    time_limit = "20min"
+    time_limit = "20m"
     executable_opts = ["input-8.i3d"]
 
     reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
