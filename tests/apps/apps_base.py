@@ -2,6 +2,7 @@
 
 import reframe as rfm
 import reframe.utility.sanity as sn
+import reframe.utility.udeps as udeps
 import abc
 
 
@@ -115,11 +116,8 @@ class AppsRunBase(rfm.RunOnlyRegressionTest, metaclass=abc.ABCMeta):
             shell=True,
         )
 
-        energy_slurm = sn.extractall_s(
-            r"JobID\s+ConsumedEnergy\s+------------ --------------\s+[0-9]+\s+[0-9]+\s+[0-9]+.bat\+\s+[0-9]+\s+[0-9]+.ext\+\s+[0-9]+\s+[0-9]+.0\s+(?P<energy>[0-9]+)",
-            str(slurm.stdout),
-            "energy",
-        )
+        energy_slurm = sn.extractall_s(r"ConsumedEnergy.*?\s+(?P<energy>[0-9]+)\s*$", str(slurm.stdout), "energy")
+        
         return int(str(energy_slurm[0]))
 
     @performance_function("sec", perf_key="job_time")
