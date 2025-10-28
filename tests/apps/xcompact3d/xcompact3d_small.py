@@ -1,24 +1,23 @@
-#!/usr/bin/env python3
-
-"""Reframe test for XCompact3D"""
+"""Small test for XCompact3D"""
 
 # Based on original work from:
 #   Copyright 2016-2022 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
 #   ReFrame Project Developers. See the top-level LICENSE file for details.
 #   SPDX-License-Identifier: BSD-3-Clause
 
+import os
+
 import reframe as rfm
-import reframe.utility.sanity as sn
+from xcompact3d_base import XCompact3DBaseEnvironment
+from xcompact3d_build import XCompact3DSourceBuild
 
 
-# @rfm.simple_test
-class XCompact3DSmallTest(rfm.RegressionTest):
-    """XCompact 3D Small Test"""
+@rfm.simple_test
+class XCompact3DSmallTest(XCompact3DBaseEnvironment):
+    """Using the source build, run a XCompact3D test on ARCHER2"""
 
-    valid_systems = ["archer2:compute"]
-    valid_prog_environs = ["PrgEnv-gnu"]
-
-    tags = {"performance", "applications"}
+    xcompact3d_binary = fixture(XCompact3DSourceBuild, scope="environment")
+    tags = {"applications", "performance"}
 
     num_nodes = 8
     num_tasks_per_node = 128
@@ -28,29 +27,11 @@ class XCompact3DSmallTest(rfm.RegressionTest):
     env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
 
     time_limit = "1h"
-    build_system = "CMake"
-    prebuild_cmds = [
-        "git clone https://github.com/xcompact3d/Incompact3d.git",
-        "cd Incompact3d",
-    ]
-    builddir = "Incompact3d"
-    executable = "Incompact3d/bin/xcompact3d"
     executable_opts = ["input-8.i3d"]
-    modules = ["cmake/3.29.4"]
 
     reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
 
-    @sanity_function
-    def assert_finished(self):
-        """Sanity check that simulation finished successfully"""
-        return sn.assert_found("Good job", self.stdout)
-
-    @performance_function("seconds", perf_key="performance")
-    def extract_perf(self):
-        """Extract performance value to compare with reference value"""
-        return sn.extractsingle(
-            r"Averaged time per step \(s\):\s+(?P<steptime>\S+)",
-            self.stdout,
-            "steptime",
-            float,
-        )
+    @run_after("setup")
+    def set_executable(self):
+        """Sets up executable"""
+        self.executable = os.path.join(self.xcompact3d_binary.stagedir, "Incompact3d/bin/xcompact3d")
