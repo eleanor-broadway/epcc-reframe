@@ -9,7 +9,6 @@
 
 import reframe as rfm
 import reframe.utility.sanity as sn
-from xcompact3d import XCompact3DBaseEnvironment
 
 # class XCompact3dFetchStable(AppsFetchBase):
 #     """Test to fetch xcompact3d from github"""
@@ -110,21 +109,21 @@ class XCompact3DSourceBuild(rfm.CompileOnlyRegressionTest):
 
 # Instructions for building xcompact3d: 
 
-module swap PrgEnv-cray PrgEnv-gnu
-module load cmake 
+# module swap PrgEnv-cray PrgEnv-gnu
+# module load cmake 
 
-git clone https://github.com/xcompact3d/Incompact3d.git
-cd Incompact3d
-git checkout v5.0 
-mkdir build 
-cd build 
-cmake .. 
-make -j 8 
+# git clone https://github.com/xcompact3d/Incompact3d.git
+# cd Incompact3d
+# git checkout v5.0 
+# mkdir build 
+# cd build 
+# cmake .. 
+# make -j 8 
 
 
 
-cmake -S . -B build
-cd build 
-cmake --build . -j 8
+# cmake -S . -B build
+# cd build 
+# cmake --build . -j 8
 
-Executable in build/bin/xcompact3d 
+# Executable in build/bin/xcompact3d 
