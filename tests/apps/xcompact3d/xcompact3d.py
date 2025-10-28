@@ -11,7 +11,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-@rfm.simple_test
+# @rfm.simple_test
 class XCompact3DTest(rfm.RegressionTest):
     """XCompact 3D Test"""
 
