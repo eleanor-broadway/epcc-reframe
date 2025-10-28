@@ -19,7 +19,7 @@ class XCompact3DBaseEnvironment(rfm.RunOnlyRegressionTest):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("Good job!", self.stdout)
 
-    @performance_function("seconds", perf_key="performance")
+    @performance_function("seconds")
     def extract_perf(self):
         """Extract performance value to compare with reference value"""
         return sn.extractsingle(
