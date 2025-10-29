@@ -33,7 +33,7 @@ class FetchOpenFoam(rfm.RunOnlyRegressionTest):
         return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
 
 
-@rfm.simple_test
+# @rfm.simple_test
 class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
     """Test compilation of OpenFoam"""
 

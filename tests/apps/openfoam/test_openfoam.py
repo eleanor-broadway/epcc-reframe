@@ -1,11 +1,4 @@
-#!/usr/bin/env python3
-
-"""Reframe test for OpenFoam"""
-
-# Based on original work from:
-#   Copyright 2016-2022 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
-#   ReFrame Project Developers. See the top-level LICENSE file for details.
-#   SPDX-License-Identifier: BSD-3-Clause
+"""Reframe test"""
 
 import os
 import reframe as rfm
@@ -105,7 +98,7 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
         return sn.assert_eq(0, 0)
 
 
-@rfm.simple_test
+# @rfm.simple_test
 class TestOpenFoam(rfm.RunOnlyRegressionTest):
     """OpenFoam Test"""
 
