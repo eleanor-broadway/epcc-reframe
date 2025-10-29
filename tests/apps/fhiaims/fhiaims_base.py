@@ -6,6 +6,7 @@ import reframe.utility.sanity as sn
 
 class FHIaimsBase(rfm.RunOnlyRegressionTest):
     """Definition of functions used for all FHI-aims ReFrame tests"""
+
     fhiaims_version = "240920.0"
     maintainers = ["e.broadway@epcc.ed.ac.uk"]
     strict_check = True
@@ -22,8 +23,8 @@ class FHIaimsBase(rfm.RunOnlyRegressionTest):
     def extract_walltime(self):
         """Extract walltime for performance check"""
         return sn.extractsingle(
-            r"Total time\s*:\s*\d+\.\d+\s*s\s+(?P<perf>\d+\.\d+)",
+            r"Total time\s*:\s*\d+\.\d+\s*s\s+(?P<walltime>\d+\.\d+)",
             self.keep_files[0],
-            "perf",
+            "walltime",
             float,
         )
