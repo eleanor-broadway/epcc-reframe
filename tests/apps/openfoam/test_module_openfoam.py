@@ -6,27 +6,37 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-class OpenFoamBaseCheck(rfm.RunOnlyRegressionTest):
-    """ReFrame OpenFoam test base class"""
+class OpenFOAMDamBreakBase(rfm.RunOnlyRegressionTest):
+    """ReFrame OpenFOAM test base class"""
 
-    # Which modules to load in test
+    valid_systems = ["archer2:compute"]
+    valid_prog_environs = ["PrgEnv-gnu"]
+
     modules = ["openfoam/org/v10.20230119"]
-    # Identify the executable
     executable = "interFoam"
-    # Additional Slurm parameters. Requires adding to config file first.
     extra_resources = {"qos": {"qos": "standard"}}
-    # Output files to be retained
     keep_files = ["rfm_job.out"]
 
     maintainers = ["j.richings@epcc.ed.ac.uk"]
     use_multithreading = False
     tags = {"applications", "performance"}
 
-    # Reference value to validate run with
+    # # Reference value to validate run with
+    # reference = {
+    #     "archer2:compute": {"performance": (6, -0.05, 0.05, "seconds")},
+    # }
 
-    reference = {
-        "archer2:compute": {"performance": (6, -0.05, 0.05, "seconds")},
-    }
+    @run_after("init")
+    def setup_params(self):
+        """sets up extra parameters"""
+        self.descr += self.freq
+        if self.current_system.name in ["archer2"]:
+            self.env_vars = {
+                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+                "OMP_PLACES": "cores",
+                "SLURM_CPU_FREQ_REQ": self.freq,
+            }
+
 
     @sanity_function
     def assert_finished(self):
@@ -45,20 +55,14 @@ class OpenFoamBaseCheck(rfm.RunOnlyRegressionTest):
 
 
 @rfm.simple_test
-class OpenFoamDamnBreak(OpenFoamBaseCheck):
-    """OpenFoam Damn break test"""
+class OpenFOAMDamBreak(OpenFOAMDamBreakBase):
+    """OpenFoam Dam break test"""
 
-    # Select system to use
-    valid_systems = ["archer2:compute"]
-    # Set Programming Environment
-    valid_prog_environs = ["PrgEnv-gnu"]
-    # Description of test
-    descr = "OpenFoam damnBreak"
-    # Command line options for executable
+    # valid_systems = ["archer2:compute"]
+    # valid_prog_environs = ["PrgEnv-gnu"]
     executable_opts = ("").split()
-    # different cpu frequencies
     freq = parameter(["2250000", "2000000"])
-    # slurm parameters
+
     num_tasks = 1
     num_tasks_per_node = 1
     num_cpus_per_task = 128
@@ -69,16 +73,16 @@ class OpenFoamDamnBreak(OpenFoamBaseCheck):
         "2250000": (3.6, -0.1, 0.1, "seconds"),
     }
 
-    @run_after("init")
-    def setup_params(self):
-        """sets up extra parameters"""
-        self.descr += self.freq
-        if self.current_system.name in ["archer2"]:
-            self.env_vars = {
-                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-                "OMP_PLACES": "cores",
-                "SLURM_CPU_FREQ_REQ": self.freq,
-            }
+    # @run_after("init")
+    # def setup_params(self):
+    #     """sets up extra parameters"""
+    #     self.descr += self.freq
+    #     if self.current_system.name in ["archer2"]:
+    #         self.env_vars = {
+    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+    #             "OMP_PLACES": "cores",
+    #             "SLURM_CPU_FREQ_REQ": self.freq,
+    #         }
 
     @run_before("run")
     def setup_testcase(self):
@@ -101,20 +105,14 @@ class OpenFoamDamnBreak(OpenFoamBaseCheck):
 
 
 @rfm.simple_test
-class OpenFoamDamnBreakParallel(OpenFoamBaseCheck):
-    """OpenFoam Damn break test"""
+class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
+    """OpenFoam Dam break test"""
 
-    # Select system to use
-    valid_systems = ["archer2:compute"]
-    # Set Programming Environment
-    valid_prog_environs = ["PrgEnv-gnu"]
-    # Description of test
-    descr = "OpenFoam damnBreak"
-    # Command line options for executable
+    # valid_systems = ["archer2:compute"]
+    # valid_prog_environs = ["PrgEnv-gnu"]
+    descr = "OpenFoam damBreak"
     executable_opts = ("-parallel").split()
-    # different cpu frequencies
     freq = parameter(["2250000", "2000000"])
-    # slurm parameters
     num_tasks = 4
     num_tasks_per_node = 1
     num_cpus_per_task = 128
@@ -125,16 +123,16 @@ class OpenFoamDamnBreakParallel(OpenFoamBaseCheck):
         "2250000": (5, -0.5, 0.5, "seconds"),
     }
 
-    @run_after("init")
-    def setup_params(self):
-        """sets up extra parameters"""
-        self.descr += self.freq
-        if self.current_system.name in ["archer2"]:
-            self.env_vars = {
-                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-                "OMP_PLACES": "cores",
-                "SLURM_CPU_FREQ_REQ": self.freq,
-            }
+    # @run_after("init")
+    # def setup_params(self):
+    #     """sets up extra parameters"""
+    #     self.descr += self.freq
+    #     if self.current_system.name in ["archer2"]:
+    #         self.env_vars = {
+    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+    #             "OMP_PLACES": "cores",
+    #             "SLURM_CPU_FREQ_REQ": self.freq,
+    #         }
 
     @run_before("run")
     def setup_testcase(self):
