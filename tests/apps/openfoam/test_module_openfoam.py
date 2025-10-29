@@ -6,7 +6,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-class OpeFOAMDamBreakBase(rfm.RunOnlyRegressionTest):
+class OpenFOAMDamBreakBase(rfm.RunOnlyRegressionTest):
     """Base class for all DamBreak OpenFOAM tests"""
 
     modules = ["openfoam/org/v10.20230119"]
@@ -68,7 +68,7 @@ class OpeFOAMDamBreakBase(rfm.RunOnlyRegressionTest):
 
 
 @rfm.simple_test
-class OpenFOAMDamBreak(OpenFoamBaseCheck):
+class OpenFOAMDamBreak(OpenFOAMDamBreakBase):
 
     executable_opts = ("").split()
     num_tasks = 1
@@ -92,18 +92,6 @@ class OpenFOAMDamBreak(OpenFoamBaseCheck):
     #             "SLURM_CPU_FREQ_REQ": self.freq,
     #         }
 
-    # @run_before("run")
-    # def setup_testcase(self):
-    #     """set up test case"""
-    #     self.prerun_cmds = [
-    #         "source ${FOAM_INSTALL_DIR}/etc/bashrc",
-    #         "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
-    #         "cd damBreak",
-    #         "blockMesh",
-    #         "cp 0/alpha.water.orig 0/alpha.water",
-    #         "setFields",
-    #     ]
-
     # @run_before("performance")
     # def set_reference(self):
     #     """Changes reference values"""
@@ -113,7 +101,7 @@ class OpenFOAMDamBreak(OpenFoamBaseCheck):
 
 
 @rfm.simple_test
-class OpenFOAMDamBreakParallel(OpenFoamBaseCheck):
+class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
 
     executable_opts = ("-parallel").split()
     num_tasks = 4
@@ -149,6 +137,13 @@ class OpenFOAMDamBreakParallel(OpenFoamBaseCheck):
     #         "setFields",
     #         "decomposePar",
     #     ]
+
+    @run_before("run")
+    def setup_testcase(self):
+        """set up test case"""
+        self.prerun_cmds = [
+            "decomposePar"
+        ]
 
     @sanity_function
     def assert_finished_parallel(self):
