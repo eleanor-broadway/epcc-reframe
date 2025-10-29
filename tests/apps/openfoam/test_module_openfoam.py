@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """ReFrame test for cp2k"""
 
 import reframe as rfm
@@ -23,10 +21,10 @@ class OpenFOAMDamBreakBase(rfm.RunOnlyRegressionTest):
 
     freq = parameter(["2250000", "2000000"])
 
-    # Reference value to validate run with
-    reference = {
-        "archer2:compute": {"performance": (6, -0.05, 0.05, "seconds")},
-    }
+    # # Reference value to validate run with
+    # reference = {
+    #     "archer2:compute": {"performance": (6, -0.05, 0.05, "seconds")},
+    # }
 
     @run_after("init")
     def setup_params(self):
@@ -76,7 +74,7 @@ class OpenFOAMDamBreak(OpenFOAMDamBreakBase):
     num_cpus_per_task = 128
     time_limit = "10m"
 
-    reference_performance = {
+    reference = {
         "2000000": (6, -0.1, 0.1, "seconds"),
         "2250000": (3.6, -0.1, 0.1, "seconds"),
     }
@@ -92,17 +90,6 @@ class OpenFOAMDamBreak(OpenFOAMDamBreakBase):
             "cp 0/alpha.water.orig 0/alpha.water",
             "setFields",
         ]
-
-    # @run_after("init")
-    # def setup_params(self):
-    #     """sets up extra parameters"""
-    #     self.descr += self.freq
-    #     if self.current_system.name in ["archer2"]:
-    #         self.env_vars = {
-    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-    #             "OMP_PLACES": "cores",
-    #             "SLURM_CPU_FREQ_REQ": self.freq,
-    #         }
 
     # @run_before("performance")
     # def set_reference(self):
@@ -121,21 +108,10 @@ class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
     num_cpus_per_task = 128
     time_limit = "10m"
 
-    reference_performance = {
+    reference = {
         "2000000": (5, -0.5, 0.5, "seconds"),
         "2250000": (5, -0.5, 0.5, "seconds"),
     }
-
-    # @run_after("init")
-    # def setup_params(self):
-    #     """sets up extra parameters"""
-    #     self.descr += self.freq
-    #     if self.current_system.name in ["archer2"]:
-    #         self.env_vars = {
-    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-    #             "OMP_PLACES": "cores",
-    #             "SLURM_CPU_FREQ_REQ": self.freq,
-    #         }
 
     @run_before("run")
     def setup_testcase(self):
