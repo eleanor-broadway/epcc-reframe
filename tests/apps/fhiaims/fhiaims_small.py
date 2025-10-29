@@ -7,8 +7,8 @@ from fhiaims_base import FHIaimsBase
 class FHIaimsAcLysAla19HBenchmark(FHIaimsBase):
     """Base class to run the AUSURF112 QE Smoke test on ARCHER2"""
 
-    n_nodes = 1
-    num_tasks = 128
+    n_nodes = 2
+    num_tasks = 256
     num_tasks_per_node = 128
     num_cpus_per_task = 1
     time_limit = "20m"
@@ -22,6 +22,7 @@ class FHIaimsAcLysAla19HBenchmark(FHIaimsBase):
 @rfm.simple_test
 class FHIaimsAcLysAla19HBenchmarkModule(FHIaimsAcLysAla19HBenchmark):
     """Run test with module"""
+
     tags = {"applications", "performance"}
     executable = "aims.mpi.x"
     modules = [f"fhiaims/{FHIaimsBase.fhiaims_version}"]

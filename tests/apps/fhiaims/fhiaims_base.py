@@ -19,11 +19,11 @@ class FHIaimsBase(rfm.RunOnlyRegressionTest):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("Have a nice day.", self.stdout)
 
-    @performance_function("s", perf_key="performance")
+    @performance_function("s", perf_key="walltime")
     def extract_walltime(self):
         """Extract walltime for performance check"""
         return sn.extractsingle(
-            r"^\s*\|\s*Total time\s*:\s*\d+\.\d+\s*s\s+(?P<walltime>\d+\.\d+)",
+            r"^\s*\|\s*Total time\s*:.*?(?P<walltime>\d+\.\d+)\s*s\s*$",
             self.keep_files[0],
             "walltime",
             float,
