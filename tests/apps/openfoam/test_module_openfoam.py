@@ -81,6 +81,18 @@ class OpenFOAMDamBreak(OpenFOAMDamBreakBase):
         "2250000": (3.6, -0.1, 0.1, "seconds"),
     }
 
+    @run_before("run")
+    def setup_testcase(self):
+        """set up test case"""
+        self.prerun_cmds = [
+            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
+            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
+            "cd damBreak",
+            "blockMesh",
+            "cp 0/alpha.water.orig 0/alpha.water",
+            "setFields",
+        ]
+
     # @run_after("init")
     # def setup_params(self):
     #     """sets up extra parameters"""
@@ -125,24 +137,17 @@ class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
     #             "SLURM_CPU_FREQ_REQ": self.freq,
     #         }
 
-    # @run_before("run")
-    # def setup_testcase(self):
-    #     """set up test case"""
-    #     self.prerun_cmds = [
-    #         "source ${FOAM_INSTALL_DIR}/etc/bashrc",
-    #         "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
-    #         "cd damBreak",
-    #         "blockMesh",
-    #         "cp 0/alpha.water.orig 0/alpha.water",
-    #         "setFields",
-    #         "decomposePar",
-    #     ]
-
     @run_before("run")
     def setup_testcase(self):
         """set up test case"""
         self.prerun_cmds = [
-            "decomposePar"
+            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
+            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
+            "cd damBreak",
+            "blockMesh",
+            "cp 0/alpha.water.orig 0/alpha.water",
+            "setFields",
+            "decomposePar",
         ]
 
     @sanity_function
