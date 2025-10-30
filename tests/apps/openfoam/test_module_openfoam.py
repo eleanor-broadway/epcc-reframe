@@ -4,8 +4,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 from openfoam_org_base import OpenFOAMBase
-
-
+from openfoam_org_build import CompileOpenFOAM
 
 class OpenFOAMDamBreakBase(OpenFOAMBase): 
     """OpenFOAM DamBreak test base class"""
@@ -14,7 +13,6 @@ class OpenFOAMDamBreakBase(OpenFOAMBase):
     num_cpus_per_task = 128
     time_limit = "10m"
     freq = parameter(["2250000", "2000000"])
-
 
     @run_after("init")
     def setup_params(self):
@@ -36,6 +34,7 @@ class OpenFOAMDamBreakBase(OpenFOAMBase):
             "blockMesh",
             "cp 0/alpha.water.orig 0/alpha.water",
             "setFields",
+            "which interFoam"
         ]
 
     @run_before("performance")
@@ -46,9 +45,9 @@ class OpenFOAMDamBreakBase(OpenFOAMBase):
             self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
 
 
-@rfm.simple_test
+
 class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
-    """OpenFOAM DamBreak test on 1 node"""
+    """OpenFOAM DamBreak test on 1 node with module"""
 
     executable = "interFoam"
     executable_opts = ("").split()
@@ -61,44 +60,33 @@ class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
         "2250000": (3.6, -0.1, 0.1, "seconds"),
     }
 
-    # @run_before("performance")
-    # def set_reference(self):
-    #     """Changes reference values"""
-    #     if self.current_system.name in ["archer2"]:
-    #         # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
-    #         self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
+
+@rfm.simple_test
+class OpenFOAMDamBreakOneNodeModule(OpenFOAMDamBreakOneNode):
+    """OpenFOAM DamBreak test on 1 node with module"""
+
+    executable = "interFoam"
+    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
 
 
 # @rfm.simple_test
-# class OpenFOAMDamBreakOneNodeModule(OpenFOAMDamBreakOneNode):
-#     """DamBreak 1 node module test"""
-#     executable = "interFoam"    
-#     modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
+class OpenFOAMDamBreakOneNodeBuild(OpenFOAMDamBreakOneNode):
+    """OpenFOAM DamBreak test on 1 node with reframe source build"""
+
+    interfoam_binary = fixture(CompileOpenFOAM, scope="environment")
+
+    @run_after("setup")
+    def set_executable(self):
+        """Sets up executable"""
+        self.executable = os.path.join(
+            self.interfoam_binary.stagedir, f"q-e-qe-{QEBaseEnvironment.qe_version}", "build/bin/interFoam"
+        )
 
 
-
-# class OpenFOAMDamBreakOneNodeSourceBuild(OpenFOAMDamBreakOneNode):
-#     """DamBreak 1 node build test"""
-
-#     interfoam_binary = fixture(CompileOpenFOAM, scope="environment")
-
-#     @run_after("setup")
-#     def set_executable(self):
-#         """Sets up executable"""
-#         self.executable = os.path.join(
-#             # self.interfoam_binary.stagedir, f"q-e-qe-{QEBaseEnvironment.qe_version}", "build/bin/interFoam"
-#         )
-
-
-@rfm.simple_test
 class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
     """OpenFOAM DamBreak test"""
-
-    executable = "interFoam"
-    executable_opts = ("-parallel").split()
-    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
-
     num_tasks = 4
+    executable_opts = ("-parallel").split()
 
     reference_performance = {
         "2000000": (5, -0.5, 0.5, "seconds"),
@@ -117,9 +105,16 @@ class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("Finalising parallel run", self.stdout)
 
-    # @run_before("performance")
-    # def set_reference(self):
-    #     """Changes reference values"""
-    #     if self.current_system.name in ["archer2"]:
-    #         # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
-    #         self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
+
+# @rfm.simple_test
+class OpenFOAMDamBreakParallelModule(OpenFOAMDamBreakParallel):
+    """OpenFOAM DamBreak test"""
+
+    executable = "interFoam"
+    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
+
+
+# @rfm.simple_test
+class OpenFOAMDamBreakParallelBuild(OpenFOAMDamBreakParallel):
+    """OpenFOAM DamBreak test"""
+

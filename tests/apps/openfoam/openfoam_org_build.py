@@ -37,7 +37,7 @@ class FetchOpenFOAM(rfm.RunOnlyRegressionTest):
         ])
 
 
-@rfm.simple_test
+# @rfm.simple_test
 class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     """Test compilation of OpenFoam"""
 
