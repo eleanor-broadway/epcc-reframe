@@ -15,12 +15,16 @@ class FetchOpenFoam(OpenFOAMBase):
     """Download OpenFoam"""
 
     valid_systems = ["archer2:login"]
-    version = f"{OpenFOAMBase.openfoam_org_vesion}"
-    executable = "wget"
+    # version = f"{OpenFOAMBase.openfoam_org_version}"
+    executable = "bash"
     executable_opts = [
-        "-O",
-        f"OpenFOAM-{OpenFOAMBase.openfoam_org_vesion_major}-{OpenFOAMBase.openfoam_org_vesion_patch}.tar.gz \
-        http://dl.openfoam.org/source/{version}",
+        "-c",
+        f"""
+        wget -O OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-{OpenFOAMBase.openfoam_org_version_patch}.tar.gz \
+        http://dl.openfoam.org/source/{OpenFOAMBase.openfoam_org_version} &&
+        wget -O ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version-{OpenFOAMBase.openfoam_org_version_major}.tar.gz \
+        http://dl.openfoam.org/third-party/{OpenFOAMBase.openfoam_org_version_major}
+        """ 
     ]
     local = True
     tags = {"fetch"}
@@ -28,7 +32,10 @@ class FetchOpenFoam(OpenFOAMBase):
     @sanity_function
     def validate_download(self):
         """Validate OpenFoam Downloaded"""
-        return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
+        return sn.all([
+            sn.path_isfile(f"OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-{OpenFOAMBase.openfoam_org_version_patch}.tar.gz"),
+            sn.path_isfile(f"ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version-{OpenFOAMBase.openfoam_org_version_major}.tar.gz")
+        ])
 
 # @rfm.simple_test
 class CompileOpenFoam(rfm.CompileOnlyRegressionTest):

@@ -27,7 +27,7 @@ class OpenFOAMDamBreak(OpenFOAMBase):
 
     executable = "interFoam"
     executable_opts = ("").split()
-    modules = [f"openfoam/org/{OpenFOAMBase.openfoam_org_version}"]
+    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
 
     num_tasks = 1
     num_tasks_per_node = 1
@@ -76,7 +76,7 @@ class OpenFOAMDamBreakParallel(OpenFOAMBase):
 
     executable = "interFoam"
     executable_opts = ("-parallel").split()
-    modules = [f"openfoam/org/{OpenFOAMBase.openfoam_org_version}"]
+    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
 
     num_tasks = 4
     num_tasks_per_node = 1
