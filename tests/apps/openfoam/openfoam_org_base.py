@@ -14,15 +14,10 @@ class OpenFOAMBase(rfm.RunOnlyRegressionTest):
     use_multithreading = False
     tags = {"applications", "performance"}
 
-    # Default reference value to validate run with
-    # reference = {
-    #     "archer2:compute": {"performance": (6, -0.05, 0.05, "seconds")},
-    # }
-
     @run_after("init")
     def setup_params(self):
         """sets up extra parameters"""
-        self.descr += self.freq
+        # self.descr += self.freq
         if self.current_system.name in ["archer2"]:
             self.env_vars = {
                 "OMP_NUM_THREADS": str(self.num_cpus_per_task),
