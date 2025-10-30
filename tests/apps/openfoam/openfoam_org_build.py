@@ -59,17 +59,19 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
     time_limit = "4h"
 
-    @run_before("compile")
-    def copy_sources(self):
-        """Copy tarballs from FetchOpenFOAM output."""
-        self.prerun_cmds = [
-            f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .",
-            f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz ."
-        ]
+    # @run_before("compile")
+    # def copy_sources(self):
+    #     """Copy tarballs from FetchOpenFOAM output."""
+        # self.prerun_cmds = [
+        #     f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .",
+        #     f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz ."
+        # ]
 
     @run_before('compile')
     def setup_build(self):
         self.build_system.commands = [
+            f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .", 
+            f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz ."
             'chmod u+x site/compile.sh',
             './site/compile.sh',
         ]

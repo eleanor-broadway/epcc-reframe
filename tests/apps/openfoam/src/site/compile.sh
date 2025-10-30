@@ -9,11 +9,11 @@ source ./site/version.sh
 # what version it is...
 # ...
 
-# tar xf OpenFOAM-${version_major}-${version_patch}.tar.gz
-# tar xf ThirdParty-${version_major}-version-${version_major}.tar.gz
+tar xf OpenFOAM-${version_major}-${version_patch}.tar.gz
+tar xf ThirdParty-${version_major}-version-${version_major}.tar.gz
 
-# mv OpenFOAM-${version_major}-${version_patch} OpenFOAM-${version_major}
-# mv ThirdParty-${version_major}-version-${version_major} ThirdParty-${version_major}
+mv OpenFOAM-${version_major}-${version_patch} OpenFOAM-${version_major}
+mv ThirdParty-${version_major}-version-${version_major} ThirdParty-${version_major}
 
 # Patch various issues
 
