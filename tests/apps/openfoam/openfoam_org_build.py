@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Reframe test for OpenFoam"""
 
 # Based on original work from:
@@ -10,21 +8,20 @@
 import os
 import reframe as rfm
 import reframe.utility.sanity as sn
+from openfoam_org_base import OpenFOAMBase
 
-
+@rfm.simple_test
 class FetchOpenFoam(rfm.RunOnlyRegressionTest):
     """Downlaod OpenFoam"""
 
-    version = variable(str, value="v2412")
+    version = f"v{OpenFOAMBase.openfoam_org_vesion_major}"
     executable = "wget"
     executable_opts = [
-        f"https://sourceforge.net/projects/openfoam/files/{version}/OpenFOAM-{version}.tgz",
+        f"OpenFOAM-{OpenFOAMBase.openfoam_org_vesion_major}-{OpenFOAMBase.openfoam_org_vesion_patch}.tar.gz \
+        http://dl.openfoam.org/source/{version}",
         f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz",
     ]
     local = True
-    valid_systems = ["archer2:login"]
-    valid_prog_environs = ["PrgEnv-gnu"]
-
     tags = {"fetch"}
 
     @sanity_function
