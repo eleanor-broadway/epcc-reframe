@@ -13,7 +13,7 @@ class OpenFOAMBase(rfm.RunOnlyRegressionTest):
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
     
-    modules = [f"openfoam/org/{openfoam_org_version}"]
+    # modules = [f"openfoam/org/{openfoam_org_version}"]
     maintainers = ["e.broadway@epcc.ed.ac.uk", "j.richings@epcc.ed.ac.uk"]
     use_multithreading = False
     tags = {"applications", "performance"}

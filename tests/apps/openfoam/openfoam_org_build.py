@@ -15,12 +15,13 @@ class FetchOpenFoam(OpenFOAMBase):
     """Download OpenFoam"""
 
     valid_systems = ["archer2:login"]
-    version = f"v{OpenFOAMBase.openfoam_org_vesion_major}"
+    version = f"{OpenFOAMBase.openfoam_org_vesion}"
     executable = "wget"
     executable_opts = [
+        "-O",
         f"OpenFOAM-{OpenFOAMBase.openfoam_org_vesion_major}-{OpenFOAMBase.openfoam_org_vesion_patch}.tar.gz \
         http://dl.openfoam.org/source/{version}",
-        f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz",
+        # f"https://sourceforge.net/projects/openfoam/files/{version}/ThirdParty-{version}.tgz",
     ]
     local = True
     tags = {"fetch"}
@@ -30,6 +31,7 @@ class FetchOpenFoam(OpenFOAMBase):
         """Validate OpenFoam Downloaded"""
         return sn.path_isfile(f"ThirdParty-{self.version}.tgz") and sn.path_isfile(f"OpenFOAM-{self.version}.tgz")
 
+wget -O OpenFOAM-10-20230119.tar.gz         http://dl.openfoam.org/source/v10 https://sourceforge.net/projects/openfoam/files/v10/ThirdParty-v10.tgz
 
 # @rfm.simple_test
 class CompileOpenFoam(rfm.CompileOnlyRegressionTest):

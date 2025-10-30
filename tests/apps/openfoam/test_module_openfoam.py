@@ -17,6 +17,8 @@ from openfoam_org_base import OpenFOAMBase
     #             "SLURM_CPU_FREQ_REQ": self.freq,
     #         }
 
+    # modules = [f"openfoam/org/{openfoam_org_version}"]
+
 
 
 @rfm.simple_test
@@ -25,6 +27,7 @@ class OpenFOAMDamBreak(OpenFOAMBase):
 
     executable = "interFoam"
     executable_opts = ("").split()
+    modules = [f"openfoam/org/{OpenFOAMBase.openfoam_org_version}"]
 
     num_tasks = 1
     num_tasks_per_node = 1
@@ -73,6 +76,7 @@ class OpenFOAMDamBreakParallel(OpenFOAMBase):
 
     executable = "interFoam"
     executable_opts = ("-parallel").split()
+    modules = [f"openfoam/org/{OpenFOAMBase.openfoam_org_version}"]
 
     num_tasks = 4
     num_tasks_per_node = 1
