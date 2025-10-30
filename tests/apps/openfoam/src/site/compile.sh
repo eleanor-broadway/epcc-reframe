@@ -17,7 +17,7 @@ cp site/$settings OpenFOAM-${version_major}/$settings
 rules=wmake/rules/crayGcc
 cp -r site/$rules OpenFOAM-${version_major}/$rules
 
-file="ThirdParty-${version_major}/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM"
+file="ThirdParty-10/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM"
 
 sed -i "s/gcc/\$(WM_CC)/"    ${file}
 sed -i "s/mpicc/\$(WM_CC)/"  ${file}
