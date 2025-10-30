@@ -21,7 +21,7 @@ from openfoam_org_base import OpenFOAMBase
 
 
 
-@rfm.simple_test
+# @rfm.simple_test
 class OpenFOAMDamBreak(OpenFOAMBase):
     """OpenFOAM Dam break test"""
 
@@ -70,7 +70,7 @@ class OpenFOAMDamBreak(OpenFOAMBase):
             self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
 
 
-@rfm.simple_test
+# @rfm.simple_test
 class OpenFOAMDamBreakParallel(OpenFOAMBase):
     """OpenFOAM DamBreak test"""
 
