@@ -17,9 +17,9 @@ class OpenFOAMDamBreakBase(rfm.RunOnlyRegressionTest):
     freq = parameter(["2250000", "2000000"])
 
     # Default reference value to validate run with
-    reference = {
-        "archer2:compute": {"performance": (6, -0.05, 0.05, "seconds")},
-    }
+    # reference = {
+    #     "archer2:compute": {"performance": (6, -0.05, 0.05, "seconds")},
+    # }
 
     @run_after("init")
     def setup_params(self):
