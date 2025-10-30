@@ -38,6 +38,13 @@ class OpenFOAMDamBreakBase(OpenFOAMBase):
             "setFields",
         ]
 
+    @run_before("performance")
+    def set_reference(self):
+        """Changes reference values"""
+        if self.current_system.name in ["archer2"]:
+            # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
+            self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
+
 
 @rfm.simple_test
 class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
@@ -48,22 +55,18 @@ class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
     modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
 
     num_tasks = 1
-    # num_tasks_per_node = 1
-    # num_cpus_per_task = 128
-    # time_limit = "10m"
 
-    # freq = parameter(["2250000", "2000000"])
     reference_performance = {
         "2000000": (6, -0.1, 0.1, "seconds"),
         "2250000": (3.6, -0.1, 0.1, "seconds"),
     }
 
-    @run_before("performance")
-    def set_reference(self):
-        """Changes reference values"""
-        if self.current_system.name in ["archer2"]:
-            # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
-            self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
+    # @run_before("performance")
+    # def set_reference(self):
+    #     """Changes reference values"""
+    #     if self.current_system.name in ["archer2"]:
+    #         # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
+    #         self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
 
 
 # @rfm.simple_test
@@ -96,11 +99,7 @@ class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
     modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
 
     num_tasks = 4
-    # num_tasks_per_node = 1
-    # num_cpus_per_task = 128
-    # time_limit = "10m"
 
-    # freq = parameter(["2250000", "2000000"])
     reference_performance = {
         "2000000": (5, -0.5, 0.5, "seconds"),
         "2250000": (5, -0.5, 0.5, "seconds"),
@@ -118,9 +117,9 @@ class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("Finalising parallel run", self.stdout)
 
-    @run_before("performance")
-    def set_reference(self):
-        """Changes reference values"""
-        if self.current_system.name in ["archer2"]:
-            # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
-            self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
+    # @run_before("performance")
+    # def set_reference(self):
+    #     """Changes reference values"""
+    #     if self.current_system.name in ["archer2"]:
+    #         # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
+    #         self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
