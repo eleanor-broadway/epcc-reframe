@@ -67,6 +67,13 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
             f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz ."
         ]
 
+    @run_before('compile')
+    def setup_build(self):
+        self.build_system.commands = [
+            'chmod u+x site/compile.sh',
+            './site/compile.sh',
+        ]
+
     # @run_before("compile")
     # def prepare_and_build(self):
     #     """Copy tarballs from FetchOpenFOAM output."""
