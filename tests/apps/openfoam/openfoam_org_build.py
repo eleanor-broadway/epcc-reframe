@@ -48,8 +48,7 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     # local = True
     # build_locally = True
 
-    build_system = "SingleSource"
-
+    build_system = "CustomBuild"
 
     openfoam_src = fixture(FetchOpenFOAM, scope="environment")
 
@@ -67,8 +66,13 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
     time_limit = "4h"
 
-    executable = 'source'
-    executable_opts = [f'./site-v{OpenFOAMBase.openfoam_org_version_major}.{OpenFOAMBase.openfoam_org_version_patch}/compile.sh']
+    @run_before('compile')
+        def setup_build(self):
+            self.build_system.commands = [
+                './site/compile.sh',
+            ]
+    # executable = 'source'
+    # executable_opts = [f'./site-v{OpenFOAMBase.openfoam_org_version_major}.{OpenFOAMBase.openfoam_org_version_patch}/compile.sh']
 
     @sanity_function
     def validate_build(self):
