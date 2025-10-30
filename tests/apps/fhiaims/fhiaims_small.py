@@ -16,7 +16,7 @@ class FHIaimsAcLysAla19HBenchmark(FHIaimsBase):
     extra_resources = {"qos": {"qos": "standard"}}
 
     if FHIaimsBase.fhiaims_version == "240920.0":
-        reference = {"archer2:compute": {"walltime": (299.9, -0.1, 0.1, "s")}}
+        reference = {"archer2:compute": {"walltime": (185, -0.1, 0.1, "s")}}
 
 
 @rfm.simple_test
