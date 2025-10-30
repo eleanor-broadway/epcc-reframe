@@ -71,7 +71,7 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     def setup_build(self):
         self.build_system.commands = [
             f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .", 
-            f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz ."
+            f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz .",
             'chmod u+x site/compile.sh',
             './site/compile.sh',
         ]
@@ -92,9 +92,6 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     #         'chmod u+x site/compile.sh',
     #         './site/compile.sh',
     #     ]
-
-
-
 
     # executable = 'source'
     # executable_opts = [f'./site-v{OpenFOAMBase.openfoam_org_version_major}.{OpenFOAMBase.openfoam_org_version_patch}/compile.sh']
