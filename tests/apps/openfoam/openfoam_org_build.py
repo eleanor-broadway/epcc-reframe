@@ -38,7 +38,7 @@ class FetchOpenFOAM(rfm.RunOnlyRegressionTest):
 
 
 @rfm.simple_test
-class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
+class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     """Test compilation of OpenFoam"""
 
     valid_systems = ["archer2:compute"]
@@ -51,7 +51,7 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
     build_system = "SingleSource"
 
 
-    openfoam_source = fixture(FetchOpenFOAM, scope="environment")
+    openfoam_src = fixture(FetchOpenFOAM, scope="environment")
 
     @run_before("compile")
     def copy_sources(self):
@@ -71,9 +71,9 @@ class CompileOpenFoam(rfm.CompileOnlyRegressionTest):
     executable_opts = [f'./site-v{OpenFOAMBase.openfoam_org_version_major}.{OpenFOAMBase.openfoam_org_version_patch}/compile.sh']
 
     @sanity_function
-        def validate_build(self):
-            """Check that build completed successfully."""
-            return sn.assert_found(r"Build complete", self.stdout)
+    def validate_build(self):
+        """Check that build completed successfully."""
+        return sn.assert_found(r"Build complete", self.stdout)
 
 
 
