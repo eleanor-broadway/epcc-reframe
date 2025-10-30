@@ -24,7 +24,7 @@ class FHIaimsBase(rfm.RunOnlyRegressionTest):
         """Extract walltime for performance check"""
         return sn.extractsingle(
             r"^\s*\|\s*Total time\s*:\s*(?P<cpu>\d+\.\d+)\s*s\s+(?P<walltime>\d+\.\d+)\s*s",
-            self.keep_files[0],
+            self.stdout,
             "walltime",
             float,
         )
