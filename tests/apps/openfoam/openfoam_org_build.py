@@ -67,10 +67,10 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     time_limit = "4h"
 
     @run_before('compile')
-        def setup_build(self):
-            self.build_system.commands = [
-                './site/compile.sh',
-            ]
+    def setup_build(self):
+        self.build_system.commands = [
+            './site/compile.sh',
+        ]
     # executable = 'source'
     # executable_opts = [f'./site-v{OpenFOAMBase.openfoam_org_version_major}.{OpenFOAMBase.openfoam_org_version_patch}/compile.sh']
 
