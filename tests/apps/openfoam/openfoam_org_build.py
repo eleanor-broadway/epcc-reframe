@@ -5,10 +5,10 @@
 #   ReFrame Project Developers. See the top-level LICENSE file for details.
 #   SPDX-License-Identifier: BSD-3-Clause
 
-import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 from openfoam_org_base import OpenFOAMBase
+
 
 class FetchOpenFOAM(rfm.RunOnlyRegressionTest):
     """Download OpenFoam"""
@@ -21,20 +21,30 @@ class FetchOpenFOAM(rfm.RunOnlyRegressionTest):
     executable_opts = [
         "-c",
         f"""
-        wget -O OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-{OpenFOAMBase.openfoam_org_version_patch}.tar.gz \
+        wget -O OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-\
+        {OpenFOAMBase.openfoam_org_version_patch}.tar.gz \
         http://dl.openfoam.org/source/{OpenFOAMBase.openfoam_org_version} &&
-        wget -O ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version-{OpenFOAMBase.openfoam_org_version_major}.tar.gz \
+        wget -O ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version\
+        -{OpenFOAMBase.openfoam_org_version_major}.tar.gz \
         http://dl.openfoam.org/third-party/{OpenFOAMBase.openfoam_org_version_major}
-        """ 
+        """,
     ]
 
     @sanity_function
     def validate_download(self):
         """Validate OpenFoam Downloaded"""
-        return sn.all([
-            sn.path_isfile(f"OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-{OpenFOAMBase.openfoam_org_version_patch}.tar.gz"),
-            sn.path_isfile(f"ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version-{OpenFOAMBase.openfoam_org_version_major}.tar.gz")
-        ])
+        return sn.all(
+            [
+                sn.path_isfile(
+                    f"OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-\
+                    {OpenFOAMBase.openfoam_org_version_patch}.tar.gz"
+                ),
+                sn.path_isfile(
+                    f"ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version-\
+                    {OpenFOAMBase.openfoam_org_version_major}.tar.gz"
+                ),
+            ]
+        )
 
 
 # @rfm.simple_test
@@ -49,20 +59,21 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     build_locally = False
 
     openfoam_src = fixture(FetchOpenFOAM, scope="environment")
-    
+
     num_nodes = 1
     num_tasks_per_node = 1
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
     time_limit = "4h"
 
-    @run_before('compile')
+    @run_before("compile")
     def setup_build(self):
+        """ "Prepare and run build on compute"""
         self.build_system.commands = [
-            f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .", 
+            f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .",
             f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz .",
-            'chmod u+x site/compile.sh',
-            './site/compile.sh',
+            "chmod u+x site/compile.sh",
+            "./site/compile.sh",
         ]
 
     @sanity_function

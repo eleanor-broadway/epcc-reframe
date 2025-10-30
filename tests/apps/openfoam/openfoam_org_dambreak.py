@@ -1,12 +1,14 @@
 """ReFrame test for OpenFOAM DamBreak"""
 
+import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 
 from openfoam_org_base import OpenFOAMBase
 from openfoam_org_build import CompileOpenFOAM
 
-class OpenFOAMDamBreakBase(OpenFOAMBase): 
+
+class OpenFOAMDamBreakBase(OpenFOAMBase):
     """OpenFOAM DamBreak test base class"""
 
     num_tasks_per_node = 1
@@ -34,7 +36,7 @@ class OpenFOAMDamBreakBase(OpenFOAMBase):
             "blockMesh",
             "cp 0/alpha.water.orig 0/alpha.water",
             "setFields",
-            "which interFoam"
+            "which interFoam",
         ]
 
     @run_before("performance")
@@ -43,7 +45,6 @@ class OpenFOAMDamBreakBase(OpenFOAMBase):
         if self.current_system.name in ["archer2"]:
             # https://reframe-hpc.readthedocs.io/en/stable/utility_functions_reference.html#reframe.utility.ScopedDict
             self.reference["archer2:compute:performance"] = self.reference_performance[self.freq]
-
 
 
 class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
@@ -69,7 +70,7 @@ class OpenFOAMDamBreakOneNodeModule(OpenFOAMDamBreakOneNode):
     modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
 
 
-# @rfm.simple_test
+@rfm.simple_test
 class OpenFOAMDamBreakOneNodeBuild(OpenFOAMDamBreakOneNode):
     """OpenFOAM DamBreak test on 1 node with reframe source build"""
 
@@ -78,13 +79,12 @@ class OpenFOAMDamBreakOneNodeBuild(OpenFOAMDamBreakOneNode):
     @run_after("setup")
     def set_executable(self):
         """Sets up executable"""
-        self.executable = os.path.join(
-            self.interfoam_binary.stagedir, f"q-e-qe-{QEBaseEnvironment.qe_version}", "build/bin/interFoam"
-        )
+        self.executable = os.path.join(self.interfoam_binary.stagedir, "platforms/crayGccDPInt32Opt/bin/interFoam")
 
 
 class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
     """OpenFOAM DamBreak test"""
+
     num_tasks = 4
     executable_opts = ("-parallel").split()
 
@@ -99,14 +99,13 @@ class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
         super().setup_testcase()
         self.prerun_cmds = [*self.prerun_cmds, "decomposePar"]
 
-    
     @sanity_function
     def assert_finished_parallel(self):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("Finalising parallel run", self.stdout)
 
 
-# @rfm.simple_test
+@rfm.simple_test
 class OpenFOAMDamBreakParallelModule(OpenFOAMDamBreakParallel):
     """OpenFOAM DamBreak test"""
 
@@ -114,7 +113,13 @@ class OpenFOAMDamBreakParallelModule(OpenFOAMDamBreakParallel):
     modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
 
 
-# @rfm.simple_test
+@rfm.simple_test
 class OpenFOAMDamBreakParallelBuild(OpenFOAMDamBreakParallel):
     """OpenFOAM DamBreak test"""
 
+    interfoam_binary = fixture(CompileOpenFOAM, scope="environment")
+
+    @run_after("setup")
+    def set_executable(self):
+        """Sets up executable"""
+        self.executable = os.path.join(self.interfoam_binary.stagedir, "platforms/crayGccDPInt32Opt/bin/interFoam")

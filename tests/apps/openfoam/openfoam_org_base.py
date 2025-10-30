@@ -8,11 +8,11 @@ class OpenFOAMBase(rfm.RunOnlyRegressionTest):
     """ReFrame OpenFOAM test base class"""
 
     openfoam_org_version_major = "10"
-    openfoam_org_version_patch = "20230119" 
+    openfoam_org_version_patch = "20230119"
     openfoam_org_version = f"{openfoam_org_version_major}.{openfoam_org_version_patch}"
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
-    
+
     # modules = [f"openfoam/org/{openfoam_org_version}"]
     maintainers = ["e.broadway@epcc.ed.ac.uk", "j.richings@epcc.ed.ac.uk"]
     use_multithreading = False
