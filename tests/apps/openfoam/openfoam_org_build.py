@@ -11,9 +11,10 @@ import reframe.utility.sanity as sn
 from openfoam_org_base import OpenFOAMBase
 
 @rfm.simple_test
-class FetchOpenFoam(rfm.RunOnlyRegressionTest):
-    """Downlaod OpenFoam"""
+class FetchOpenFoam(OpenFOAMBase):
+    """Download OpenFoam"""
 
+    valid_systems = ["archer2:login"]
     version = f"v{OpenFOAMBase.openfoam_org_vesion_major}"
     executable = "wget"
     executable_opts = [

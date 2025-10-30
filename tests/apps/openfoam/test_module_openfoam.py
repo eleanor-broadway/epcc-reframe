@@ -6,6 +6,19 @@ import reframe.utility.sanity as sn
 from openfoam_org_base import OpenFOAMBase
 
 
+# Write a base class for the test that includes freq set-up stuff: 
+    # @run_after("init")
+    # def setup_params(self):
+    #     """sets up extra parameters"""
+    #     if self.current_system.name in ["archer2"]:
+    #         self.env_vars = {
+    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+    #             "OMP_PLACES": "cores",
+    #             "SLURM_CPU_FREQ_REQ": self.freq,
+    #         }
+
+
+
 @rfm.simple_test
 class OpenFOAMDamBreak(OpenFOAMBase):
     """OpenFOAM Dam break test"""
@@ -23,6 +36,16 @@ class OpenFOAMDamBreak(OpenFOAMBase):
         "2000000": (6, -0.1, 0.1, "seconds"),
         "2250000": (3.6, -0.1, 0.1, "seconds"),
     }
+
+    @run_after("init")
+    def setup_params(self):
+        """sets up extra parameters"""
+        if self.current_system.name in ["archer2"]:
+            self.env_vars = {
+                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+                "OMP_PLACES": "cores",
+                "SLURM_CPU_FREQ_REQ": self.freq,
+            }
 
     @run_before("run")
     def setup_testcase(self):
@@ -61,6 +84,16 @@ class OpenFOAMDamBreakParallel(OpenFOAMBase):
         "2000000": (5, -0.5, 0.5, "seconds"),
         "2250000": (5, -0.5, 0.5, "seconds"),
     }
+
+    @run_after("init")
+    def setup_params(self):
+        """sets up extra parameters"""
+        if self.current_system.name in ["archer2"]:
+            self.env_vars = {
+                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+                "OMP_PLACES": "cores",
+                "SLURM_CPU_FREQ_REQ": self.freq,
+            }
 
     @run_before("run")
     def setup_testcase(self):
