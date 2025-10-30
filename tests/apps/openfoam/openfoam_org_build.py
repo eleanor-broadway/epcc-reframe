@@ -49,16 +49,9 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     # build_locally = True
 
     build_system = "CustomBuild"
+    build_locally = False
 
     openfoam_src = fixture(FetchOpenFOAM, scope="environment")
-
-    @run_before("compile")
-    def copy_sources(self):
-        """Copy tarballs from FetchOpenFOAM output."""
-        self.prerun_cmds = [
-            f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .",
-            f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz ."
-        ]
     
     num_nodes = 1
     num_tasks_per_node = 1
@@ -66,11 +59,22 @@ class CompileOpenFOAM(rfm.CompileOnlyRegressionTest):
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
     time_limit = "4h"
 
-    @run_before('compile')
-    def setup_build(self):
+    @run_before("compile")
+    def prepare_and_build(self):
+        """Copy tarballs from FetchOpenFOAM output."""
+        self.prerun_cmds = [
+            f"cp {self.openfoam_src.stagedir}/OpenFOAM-*.tar.gz .",
+            f"cp {self.openfoam_src.stagedir}/ThirdParty-*.tar.gz ."
+        ]
+
         self.build_system.commands = [
+            'chmod u+x site/compile.sh',
             './site/compile.sh',
         ]
+
+
+
+
     # executable = 'source'
     # executable_opts = [f'./site-v{OpenFOAMBase.openfoam_org_version_major}.{OpenFOAMBase.openfoam_org_version_patch}/compile.sh']
 
