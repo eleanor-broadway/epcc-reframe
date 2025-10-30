@@ -9,7 +9,7 @@ class OpenFOAMBase(rfm.RunOnlyRegressionTest):
 
     openfoam_org_vesion_major = "10"
     openfoam_org_vesion_patch = "20230119" 
-    openfoam_org_version = f"v{openfoam_org_vesion_major}.{openfoam_org_vesion_patch}"
+    openfoam_org_version = f"{openfoam_org_vesion_major}.{openfoam_org_vesion_patch}"
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
     
