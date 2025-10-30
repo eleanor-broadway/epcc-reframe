@@ -6,40 +6,10 @@ import reframe.utility.sanity as sn
 from openfoam_org_base import OpenFOAMBase
 
 
-# Write a base class for the test that includes freq set-up stuff: 
-    # @run_after("init")
-    # def setup_params(self):
-    #     """sets up extra parameters"""
-    #     if self.current_system.name in ["archer2"]:
-    #         self.env_vars = {
-    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-    #             "OMP_PLACES": "cores",
-    #             "SLURM_CPU_FREQ_REQ": self.freq,
-    #         }
 
-    # modules = [f"openfoam/org/{openfoam_org_version}"]
-
-
-
-# @rfm.simple_test
-class OpenFOAMDamBreak(OpenFOAMBase):
-    """OpenFOAM Dam break test"""
-
-    executable = "interFoam"
-    executable_opts = ("").split()
-    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
-
-    num_tasks = 1
-    num_tasks_per_node = 1
-    num_cpus_per_task = 128
-    time_limit = "10m"
-
-    freq = parameter(["2250000", "2000000"])
-    reference_performance = {
-        "2000000": (6, -0.1, 0.1, "seconds"),
-        "2250000": (3.6, -0.1, 0.1, "seconds"),
-    }
-
+class OpenFOAMDamBreakBase(OpenFOAMBase): 
+    """OpenFOAM DamBreak test base class"""
+    
     @run_after("init")
     def setup_params(self):
         """sets up extra parameters"""
@@ -62,6 +32,48 @@ class OpenFOAMDamBreak(OpenFOAMBase):
             "setFields",
         ]
 
+
+@rfm.simple_test
+class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
+    """OpenFOAM DamBreak test on 1 node"""
+
+    executable = "interFoam"
+    executable_opts = ("").split()
+    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
+
+    num_tasks = 1
+    num_tasks_per_node = 1
+    num_cpus_per_task = 128
+    time_limit = "10m"
+
+    freq = parameter(["2250000", "2000000"])
+    reference_performance = {
+        "2000000": (6, -0.1, 0.1, "seconds"),
+        "2250000": (3.6, -0.1, 0.1, "seconds"),
+    }
+
+    # @run_after("init")
+    # def setup_params(self):
+    #     """sets up extra parameters"""
+    #     if self.current_system.name in ["archer2"]:
+    #         self.env_vars = {
+    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+    #             "OMP_PLACES": "cores",
+    #             "SLURM_CPU_FREQ_REQ": self.freq,
+    #         }
+
+    # @run_before("run")
+    # def setup_testcase(self):
+    #     """set up test case"""
+    #     self.prerun_cmds = [
+    #         "source ${FOAM_INSTALL_DIR}/etc/bashrc",
+    #         "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
+    #         "cd damBreak",
+    #         "blockMesh",
+    #         "cp 0/alpha.water.orig 0/alpha.water",
+    #         "setFields",
+    #     ]
+
     @run_before("performance")
     def set_reference(self):
         """Changes reference values"""
@@ -71,6 +83,27 @@ class OpenFOAMDamBreak(OpenFOAMBase):
 
 
 # @rfm.simple_test
+# class OpenFOAMDamBreakOneNodeModule(OpenFOAMDamBreakOneNode):
+#     """DamBreak 1 node module test"""
+#     executable = "interFoam"    
+#     modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
+
+
+
+# class OpenFOAMDamBreakOneNodeSourceBuild(OpenFOAMDamBreakOneNode):
+#     """DamBreak 1 node build test"""
+
+#     interfoam_binary = fixture(CompileOpenFOAM, scope="environment")
+
+#     @run_after("setup")
+#     def set_executable(self):
+#         """Sets up executable"""
+#         self.executable = os.path.join(
+#             # self.interfoam_binary.stagedir, f"q-e-qe-{QEBaseEnvironment.qe_version}", "build/bin/interFoam"
+#         )
+
+
+@rfm.simple_test
 class OpenFOAMDamBreakParallel(OpenFOAMBase):
     """OpenFOAM DamBreak test"""
 
@@ -89,28 +122,36 @@ class OpenFOAMDamBreakParallel(OpenFOAMBase):
         "2250000": (5, -0.5, 0.5, "seconds"),
     }
 
-    @run_after("init")
-    def setup_params(self):
-        """sets up extra parameters"""
-        if self.current_system.name in ["archer2"]:
-            self.env_vars = {
-                "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-                "OMP_PLACES": "cores",
-                "SLURM_CPU_FREQ_REQ": self.freq,
-            }
+    # @run_after("init")
+    # def setup_params(self):
+    #     """sets up extra parameters"""
+    #     if self.current_system.name in ["archer2"]:
+    #         self.env_vars = {
+    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
+    #             "OMP_PLACES": "cores",
+    #             "SLURM_CPU_FREQ_REQ": self.freq,
+    #         }
+
+    # @run_before("run")
+    # def setup_testcase(self):
+    #     """set up test case"""
+    #     self.prerun_cmds = [
+    #         "source ${FOAM_INSTALL_DIR}/etc/bashrc",
+    #         "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
+    #         "cd damBreak",
+    #         "blockMesh",
+    #         "cp 0/alpha.water.orig 0/alpha.water",
+    #         "setFields",
+    #         "decomposePar",
+    #     ]
 
     @run_before("run")
     def setup_testcase(self):
         """set up test case"""
-        self.prerun_cmds = [
-            "source ${FOAM_INSTALL_DIR}/etc/bashrc",
-            "cp -r ${FOAM_INSTALL_DIR}/tutorials/multiphase/interFoam/laminar/damBreak/damBreak .",
-            "cd damBreak",
-            "blockMesh",
-            "cp 0/alpha.water.orig 0/alpha.water",
-            "setFields",
+        self.prerun_cmds.append = [
             "decomposePar",
         ]
+
 
     @sanity_function
     def assert_finished_parallel(self):
