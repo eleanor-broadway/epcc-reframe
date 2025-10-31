@@ -13,20 +13,9 @@ class OpenFOAMBase(rfm.RunOnlyRegressionTest):
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
 
-    # modules = [f"openfoam/org/{version}"]
     maintainers = ["e.broadway@epcc.ed.ac.uk", "j.richings@epcc.ed.ac.uk"]
     use_multithreading = False
     tags = {"applications", "performance"}
-
-    # @run_after("init")
-    # def setup_params(self):
-    #     """sets up extra parameters"""
-    #     if self.current_system.name in ["archer2"]:
-    #         self.env_vars = {
-    #             "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-    #             "OMP_PLACES": "cores",
-    #             "SLURM_CPU_FREQ_REQ": self.freq,
-    #         }
 
     @sanity_function
     def assert_finished(self):

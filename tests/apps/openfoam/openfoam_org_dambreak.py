@@ -48,7 +48,7 @@ class OpenFOAMDamBreakBase(OpenFOAMBase):
 
 
 class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
-    """OpenFOAM DamBreak test on 1 node with module"""
+    """OpenFOAM DamBreak base test on 1 node"""
 
     executable = "interFoam"
     executable_opts = ("").split()
@@ -93,7 +93,7 @@ class OpenFOAMDamBreakOneNodeBuild(OpenFOAMDamBreakOneNode):
 
 
 class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
-    """OpenFOAM DamBreak test"""
+    """OpenFOAM DamBreak base test on 4 nodes"""
 
     num_tasks = 4
     executable_opts = ("-parallel").split()
@@ -117,7 +117,7 @@ class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
 
 @rfm.simple_test
 class OpenFOAMDamBreakParallelModule(OpenFOAMDamBreakParallel):
-    """OpenFOAM DamBreak test"""
+    """OpenFOAM DamBreak test on 4 nodes with module"""
 
     executable = "interFoam"
     modules = [f"openfoam/org/v{OpenFOAMBase.version}"]
@@ -125,7 +125,7 @@ class OpenFOAMDamBreakParallelModule(OpenFOAMDamBreakParallel):
 
 @rfm.simple_test
 class OpenFOAMDamBreakParallelBuild(OpenFOAMDamBreakParallel):
-    """OpenFOAM DamBreak test"""
+    """OpenFOAM DamBreak test on 4 nodes with reframe source build"""
 
     interfoam_binary = fixture(CompileOpenFOAM, scope="environment")
 

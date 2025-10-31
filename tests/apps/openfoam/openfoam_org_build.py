@@ -1,9 +1,4 @@
-"""Reframe test for building OpenFoam"""
-
-# Based on original work from:
-#   Copyright 2016-2022 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
-#   ReFrame Project Developers. See the top-level LICENSE file for details.
-#   SPDX-License-Identifier: BSD-3-Clause
+"""Reframe test for building OpenFOAM org"""
 
 import reframe as rfm
 import reframe.utility.sanity as sn
