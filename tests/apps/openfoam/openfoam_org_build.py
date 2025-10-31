@@ -33,12 +33,8 @@ class FetchOpenFOAM(rfm.RunOnlyRegressionTest):
         """Validate OpenFoam Downloaded"""
         return sn.all(
             [
-                sn.path_isfile(
-                    f"OpenFOAM-{OpenFOAMBase.v_major}-{OpenFOAMBase.v_patch}.tar.gz"
-                ),
-                sn.path_isfile(
-                    f"ThirdParty-{OpenFOAMBase.v_major}-version-{OpenFOAMBase.v_major}.tar.gz"
-                ),
+                sn.path_isfile(f"OpenFOAM-{OpenFOAMBase.v_major}-{OpenFOAMBase.v_patch}.tar.gz"),
+                sn.path_isfile(f"ThirdParty-{OpenFOAMBase.v_major}-version-{OpenFOAMBase.v_major}.tar.gz"),
             ]
         )
 
