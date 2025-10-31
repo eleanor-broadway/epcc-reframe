@@ -52,7 +52,7 @@ class OpenFOAMDamBreakOneNode(OpenFOAMDamBreakBase):
 
     executable = "interFoam"
     executable_opts = ("").split()
-    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
+    modules = [f"openfoam/org/v{OpenFOAMBase.version}"]
 
     num_tasks = 1
 
@@ -67,7 +67,7 @@ class OpenFOAMDamBreakOneNodeModule(OpenFOAMDamBreakOneNode):
     """OpenFOAM DamBreak test on 1 node with module"""
 
     executable = "interFoam"
-    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
+    modules = [f"openfoam/org/v{OpenFOAMBase.version}"]
 
 
 @rfm.simple_test
@@ -110,7 +110,7 @@ class OpenFOAMDamBreakParallelModule(OpenFOAMDamBreakParallel):
     """OpenFOAM DamBreak test"""
 
     executable = "interFoam"
-    modules = [f"openfoam/org/v{OpenFOAMBase.openfoam_org_version}"]
+    modules = [f"openfoam/org/v{OpenFOAMBase.version}"]
 
 
 @rfm.simple_test
