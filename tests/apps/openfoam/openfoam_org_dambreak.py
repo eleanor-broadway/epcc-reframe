@@ -80,7 +80,7 @@ class OpenFOAMDamBreakOneNodeBuild(OpenFOAMDamBreakOneNode):
     def setup_extra_params(self):
         """sets up extra parameters"""
         super().setup_params()
-        self.env_vars.update({"FOAM_INSTALL_DIR": self.interfoam_binary.stagedir})
+        self.env_vars.update({"FOAM_INSTALL_DIR": os.path.join(self.interfoam_binary.stagedir, "OpenFOAM-10")})
 
     @run_after("setup")
     def set_executable(self):
@@ -135,7 +135,7 @@ class OpenFOAMDamBreakParallelBuild(OpenFOAMDamBreakParallel):
     def setup_extra_params(self):
         """sets up extra parameters"""
         super().setup_params()
-        self.env_vars.update({"FOAM_INSTALL_DIR": self.interfoam_binary.stagedir})
+        self.env_vars.update({"FOAM_INSTALL_DIR": os.path.join(self.interfoam_binary.stagedir, "OpenFOAM-10")})
 
         # if self.current_system.name in ["archer2"]:
         #     self.env_vars = {
