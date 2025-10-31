@@ -7,13 +7,13 @@ import reframe.utility.sanity as sn
 class OpenFOAMBase(rfm.RunOnlyRegressionTest):
     """ReFrame OpenFOAM test base class"""
 
-    openfoam_org_version_major = "10"
-    openfoam_org_version_patch = "20230119"
-    openfoam_org_version = f"{openfoam_org_version_major}.{openfoam_org_version_patch}"
+    v_major = "10"
+    v_patch = "20230119"
+    version = f"{v_major}.{v_patch}"
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
 
-    # modules = [f"openfoam/org/{openfoam_org_version}"]
+    # modules = [f"openfoam/org/{version}"]
     maintainers = ["e.broadway@epcc.ed.ac.uk", "j.richings@epcc.ed.ac.uk"]
     use_multithreading = False
     tags = {"applications", "performance"}

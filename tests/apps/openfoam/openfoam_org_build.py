@@ -21,12 +21,10 @@ class FetchOpenFOAM(rfm.RunOnlyRegressionTest):
     executable_opts = [
         "-c",
         f"""
-        wget -O OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-\
-        {OpenFOAMBase.openfoam_org_version_patch}.tar.gz \
-        http://dl.openfoam.org/source/{OpenFOAMBase.openfoam_org_version} &&
-        wget -O ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version\
-        -{OpenFOAMBase.openfoam_org_version_major}.tar.gz \
-        http://dl.openfoam.org/third-party/{OpenFOAMBase.openfoam_org_version_major}
+        wget -O OpenFOAM-{OpenFOAMBase.v_major}-{OpenFOAMBase.v_patch}.tar.gz \
+        http://dl.openfoam.org/source/{OpenFOAMBase.version} &&
+        wget -O ThirdParty-{OpenFOAMBase.v_major}-version-{OpenFOAMBase.v_major}.tar.gz \
+        http://dl.openfoam.org/third-party/{OpenFOAMBase.v_major}
         """,
     ]
 
@@ -36,12 +34,10 @@ class FetchOpenFOAM(rfm.RunOnlyRegressionTest):
         return sn.all(
             [
                 sn.path_isfile(
-                    f"OpenFOAM-{OpenFOAMBase.openfoam_org_version_major}-\
-                    {OpenFOAMBase.openfoam_org_version_patch}.tar.gz"
+                    f"OpenFOAM-{OpenFOAMBase.v_major}-{OpenFOAMBase.v_patch}.tar.gz"
                 ),
                 sn.path_isfile(
-                    f"ThirdParty-{OpenFOAMBase.openfoam_org_version_major}-version-\
-                    {OpenFOAMBase.openfoam_org_version_major}.tar.gz"
+                    f"ThirdParty-{OpenFOAMBase.v_major}-version-{OpenFOAMBase.v_major}.tar.gz"
                 ),
             ]
         )
