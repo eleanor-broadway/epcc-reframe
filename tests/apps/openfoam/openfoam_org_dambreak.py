@@ -80,12 +80,16 @@ class OpenFOAMDamBreakOneNodeBuild(OpenFOAMDamBreakOneNode):
     def setup_extra_params(self):
         """sets up extra parameters"""
         super().setup_params()
-        self.env_vars.update({"FOAM_INSTALL_DIR": os.path.join(self.interfoam_binary.stagedir, "OpenFOAM-10")})
+        self.env_vars.update(
+            {"FOAM_INSTALL_DIR": os.path.join(self.interfoam_binary.stagedir, f"OpenFOAM-{OpenFOAMBase.v_major}")}
+        )
 
     @run_after("setup")
     def set_executable(self):
         """Sets up executable"""
-        self.executable = os.path.join(self.interfoam_binary.stagedir, "platforms/crayGccDPInt32Opt/bin/interFoam")
+        self.executable = os.path.join(
+            self.interfoam_binary.stagedir, f"OpenFOAM-{OpenFOAMBase.v_major}/platforms/crayGccDPInt32Opt/bin/interFoam"
+        )
 
 
 class OpenFOAMDamBreakParallel(OpenFOAMDamBreakBase):
@@ -125,26 +129,17 @@ class OpenFOAMDamBreakParallelBuild(OpenFOAMDamBreakParallel):
 
     interfoam_binary = fixture(CompileOpenFOAM, scope="environment")
 
-    @run_before("run")
-    def setup_testcase(self):
-        """Set up test case"""
-        super().setup_testcase()
-        self.prerun_cmds = [*self.prerun_cmds, "decomposePar"]
-
     @run_after("setup")
     def setup_extra_params(self):
         """sets up extra parameters"""
         super().setup_params()
-        self.env_vars.update({"FOAM_INSTALL_DIR": os.path.join(self.interfoam_binary.stagedir, "OpenFOAM-10")})
-
-        # if self.current_system.name in ["archer2"]:
-        #     self.env_vars = {
-        #         "OMP_NUM_THREADS": str(self.num_cpus_per_task),
-        #         "OMP_PLACES": "cores",
-        #         "SLURM_CPU_FREQ_REQ": self.freq,
-        #     }
+        self.env_vars.update(
+            {"FOAM_INSTALL_DIR": os.path.join(self.interfoam_binary.stagedir, f"OpenFOAM-{OpenFOAMBase.v_major}")}
+        )
 
     @run_after("setup")
     def set_executable(self):
         """Sets up executable"""
-        self.executable = os.path.join(self.interfoam_binary.stagedir, "platforms/crayGccDPInt32Opt/bin/interFoam")
+        self.executable = os.path.join(
+            self.interfoam_binary.stagedir, f"OpenFOAM-{OpenFOAMBase.v_major}/platforms/crayGccDPInt32Opt/bin/interFoam"
+        )
